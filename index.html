@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>電気理論 確認問題 50問</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@400;700&display=swap');
+:root {
+  --navy:#0d1b2a; --navy2:#1a2e45; --navy3:#243d5c;
+  --orange:#e86a2f; --orange2:#f5924e; --gold:#d4a843;
+  --white:#f5f3ee; --gray:#8899aa; --light:#eef2f7;
+  --ok:#2d8a5e; --ng:#c0392b; --ok-bg:#e8f7ef; --ng-bg:#fde8e8;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--white);color:var(--navy);min-height:100vh;}
+
+/* HEADER */
+header{background:var(--navy);padding:18px 24px 14px;border-bottom:3px solid var(--orange);display:flex;align-items:center;gap:14px;}
+header h1{font-family:'Noto Serif JP',serif;font-size:1.25rem;color:#fff;font-weight:700;}
+header .sub{font-size:.7rem;color:var(--gray);margin-top:3px;}
+.hdr-badge{margin-left:auto;background:var(--navy3);border-radius:8px;padding:7px 14px;text-align:center;color:#cdd;font-size:.72rem;}
+.hdr-badge strong{display:block;font-size:1.35rem;color:var(--gold);font-weight:900;line-height:1.1;}
+
+/* PROGRESS */
+.prog-wrap{background:var(--navy2);padding:7px 24px;display:flex;align-items:center;gap:10px;}
+.prog-outer{flex:1;height:5px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden;}
+.prog-inner{height:100%;background:var(--orange);border-radius:3px;transition:width .4s;width:0%;}
+.prog-label{font-size:.7rem;color:#cdd;white-space:nowrap;}
+
+/* SCREENS */
+.screen{display:none;} .screen.active{display:block;}
+
+/* ── START ── */
+#startScreen{max-width:600px;margin:44px auto;padding:0 18px;text-align:center;}
+.start-card{background:#fff;border-radius:14px;padding:36px 32px;box-shadow:0 4px 24px rgba(0,0,0,.1);}
+.start-card h2{font-family:'Noto Serif JP',serif;font-size:1.3rem;margin-bottom:14px;}
+.start-card p{font-size:.88rem;line-height:1.9;color:#445;margin-bottom:6px;}
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0;}
+.info-box{background:var(--light);border-radius:8px;padding:13px 6px;font-size:.76rem;color:var(--navy2);}
+.info-box strong{display:block;font-size:1.25rem;color:var(--orange);margin-bottom:2px;}
+.btn-start{background:var(--orange);color:#fff;border:none;padding:13px 44px;border-radius:8px;font-size:.97rem;font-family:'Noto Sans JP',sans-serif;font-weight:700;cursor:pointer;transition:background .2s;margin-top:6px;}
+.btn-start:hover{background:var(--orange2);}
+
+/* ── QUIZ ── */
+#quizScreen{max-width:680px;margin:0 auto;padding:24px 18px 80px;}
+.q-card{background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.08);overflow:hidden;animation:fadeUp .28s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.q-card-hdr{background:var(--navy);padding:13px 18px;display:flex;align-items:center;gap:9px;}
+.q-num-badge{background:var(--orange);color:#fff;font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:12px;letter-spacing:.05em;}
+.q-type-pill{font-size:.66rem;font-weight:700;padding:2px 9px;border-radius:10px;}
+.pill-formula{background:#dbeafe;color:#1e3a8a;}
+.pill-unit{background:#fef3c7;color:#92400e;}
+.pill-fill{background:#d1fae5;color:#065f46;}
+.q-sec{font-size:.66rem;color:var(--gray);margin-left:auto;}
+.q-body{padding:20px 20px 16px;}
+.q-text{font-family:'Noto Serif JP',serif;font-size:.95rem;line-height:1.85;color:#1a2030;margin-bottom:16px;}
+
+/* 選択肢 */
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:4px;}
+.opt{border:2px solid #c8d8ee;background:#f7f9fd;border-radius:8px;padding:12px 10px;font-family:'Noto Sans JP',sans-serif;font-size:.9rem;cursor:pointer;transition:all .15s;text-align:center;font-weight:500;}
+.opt:not(:disabled):hover{border-color:var(--orange);background:#fff5ee;}
+.opt.ok{border-color:var(--ok);background:var(--ok-bg);color:var(--ok);pointer-events:none;}
+.opt.ng{border-color:var(--ng);background:var(--ng-bg);color:var(--ng);pointer-events:none;}
+.opt.reveal{border-color:var(--ok);background:var(--ok-bg);color:var(--ok);pointer-events:none;}
+.opt:disabled{pointer-events:none;}
+
+/* 記述エリア */
+.write-box{border:2px dashed #c8d8ee;border-radius:8px;background:#f7f9fd;padding:18px;min-height:66px;color:var(--gray);font-size:.8rem;text-align:center;margin-bottom:12px;}
+
+/* 判定バナー */
+.judge{display:none;border-radius:8px;padding:11px 15px;font-size:.86rem;font-weight:700;margin-top:10px;align-items:center;gap:6px;}
+.judge.ok{background:var(--ok-bg);color:var(--ok);display:flex;}
+.judge.ng{background:var(--ng-bg);color:var(--ng);display:flex;}
+
+/* 解答パネル（記述式） */
+.ans-panel{display:none;margin-top:12px;border-left:4px solid var(--ok);background:var(--ok-bg);border-radius:0 8px 8px 0;padding:13px 15px;}
+.ans-panel.show{display:block;}
+.ans-label{font-size:.7rem;font-weight:700;color:var(--ok);margin-bottom:5px;letter-spacing:.05em;}
+.ans-line{font-family:'Noto Serif JP',serif;font-size:.93rem;background:#fff;padding:4px 9px;border-radius:4px;margin:2px 0;border:1px solid #b8dbc8;display:inline-block;}
+.ans-note{font-size:.76rem;color:#555;margin-top:5px;}
+
+/* ナビ */
+.q-nav{margin-top:18px;}
+.q-nav-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.nav-count{font-size:.78rem;color:var(--gray);}
+.btn-quit{background:none;border:1.5px solid #c0cfe0;color:var(--gray);padding:6px 14px;border-radius:7px;font-family:'Noto Sans JP',sans-serif;font-size:.76rem;cursor:pointer;transition:all .15s;}
+.btn-quit:hover{border-color:var(--ng);color:var(--ng);}
+.q-nav-btns{display:flex;gap:8px;justify-content:flex-end;}
+.btn-back{background:none;border:1.5px solid var(--navy3);color:var(--navy);padding:10px 20px;border-radius:7px;font-family:'Noto Sans JP',sans-serif;font-size:.86rem;cursor:pointer;transition:all .15s;}
+.btn-back:hover:not(:disabled){background:var(--light);}
+.btn-back:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--navy);color:#fff;border:none;padding:10px 28px;border-radius:7px;font-family:'Noto Sans JP',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer;transition:background .2s;}
+.btn-next:hover{background:var(--navy3);}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:center;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:#fff;border-radius:12px;padding:28px 28px 22px;max-width:340px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.2);}
+.modal-box h3{font-size:1rem;font-weight:700;margin-bottom:10px;}
+.modal-box p{font-size:.84rem;color:#556;line-height:1.7;margin-bottom:20px;}
+.modal-btns{display:flex;gap:10px;}
+.modal-btns button{flex:1;padding:10px;border-radius:7px;font-family:'Noto Sans JP',sans-serif;font-size:.86rem;font-weight:700;cursor:pointer;border:none;}
+.modal-cancel{background:var(--light);color:var(--navy);}
+.modal-ok{background:var(--ng);color:#fff;}
+
+/* ── RESULT ── */
+#resultScreen{max-width:680px;margin:36px auto;padding:0 18px 80px;}
+.res-card{background:#fff;border-radius:14px;box-shadow:0 4px 24px rgba(0,0,0,.1);overflow:hidden;}
+.res-hdr{background:var(--navy);padding:22px 26px;border-bottom:3px solid var(--orange);}
+.res-hdr h2{font-family:'Noto Serif JP',serif;font-size:1.2rem;color:#fff;}
+.res-hdr p{font-size:.74rem;color:var(--gray);margin-top:3px;}
+.res-body{padding:26px;}
+.score-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;}
+.score-box{border-radius:10px;padding:18px;text-align:center;}
+.score-box.sel{background:#eef4ff;border:2px solid #93c5fd;}
+.score-box.desc{background:#f0fdf4;border:2px solid #86efac;}
+.score-box .sl{font-size:.72rem;color:var(--gray);margin-bottom:6px;}
+.score-box .sv{font-size:2rem;font-weight:900;}
+.score-box.sel .sv{color:#1d4ed8;}
+.score-box.desc .sv{color:var(--ok);}
+.score-box .ss{font-size:.76rem;color:#666;margin-top:3px;}
+
+/* 自己採点 */
+.self-box{background:var(--light);border-radius:10px;padding:16px 18px;margin-bottom:22px;}
+.self-box h3{font-size:.88rem;font-weight:700;margin-bottom:10px;}
+.self-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.86rem;}
+.self-row input{width:60px;padding:5px 7px;border:1.5px solid #c8d8ee;border-radius:6px;font-size:.97rem;font-weight:700;text-align:center;font-family:'Noto Sans JP',sans-serif;}
+
+/* レビュー */
+.rev-sec h3{font-size:.88rem;font-weight:700;border-bottom:2px solid var(--orange);padding-bottom:5px;margin-bottom:12px;}
+.rev-item{border:1px solid #dde4ee;border-radius:8px;margin-bottom:8px;overflow:hidden;}
+.rev-hdr{display:flex;align-items:center;gap:7px;padding:9px 13px;background:var(--light);font-size:.8rem;}
+.rev-stamp{font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:10px;}
+.st-ok{background:var(--ok-bg);color:var(--ok);}
+.st-ng{background:var(--ng-bg);color:var(--ng);}
+.rev-q{font-size:.8rem;padding:7px 13px;color:#334;line-height:1.6;}
+.rev-ans{font-size:.78rem;padding:4px 13px 9px;color:var(--ok);font-weight:700;}
+
+.btn-retry{background:var(--orange);color:#fff;border:none;padding:11px 28px;border-radius:8px;font-family:'Noto Sans JP',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer;margin-top:22px;display:block;width:100%;transition:background .2s;}
+.btn-retry:hover{background:var(--orange2);}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>電気理論 確認問題</h1>
+    <div class="sub">電気物理 ／ 電磁気 ／ 静電気 ／ 電気回路 — 全 50 問</div>
+  </div>
+  <div class="hdr-badge">
+    <strong id="hdrVal">—</strong>
+    <span id="hdrSub">テスト前</span>
+  </div>
+</header>
+<div class="prog-wrap">
+  <div class="prog-outer"><div class="prog-inner" id="progBar"></div></div>
+  <div class="prog-label" id="progLabel">準備中</div>
+</div>
+
+<!-- START -->
+<div id="startScreen" class="screen active">
+  <div class="start-card">
+    <h2>電気理論 確認問題</h2>
+    <p>電気物理・電磁気・静電気・電気回路の基礎知識を確認します。</p>
+    <p>問題は1問ずつ表示されます。<br>
+       <b>選択問題</b>は選んだら自動で次へ進みます。<br>
+       <b>記述式</b>は手元のペーパーに書いてから解答を確認してください。</p>
+    <div class="info-grid">
+      <div class="info-box"><strong>50</strong>問　合計</div>
+      <div class="info-box"><strong id="infoSel">—</strong>問　選択式</div>
+      <div class="info-box"><strong id="infoDesc">—</strong>問　記述式</div>
+    </div>
+    <button class="btn-start" onclick="startQuiz()">テストを開始する</button>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="quizScreen" class="screen">
+  <div class="q-card" id="qCard">
+    <div class="q-card-hdr">
+      <span class="q-num-badge" id="qNum">Q01</span>
+      <span class="q-type-pill" id="qPill"></span>
+      <span class="q-sec" id="qSec"></span>
+    </div>
+    <div class="q-body">
+      <p class="q-text" id="qText"></p>
+      <div id="qContent"></div>
+      <div class="judge" id="judge"></div>
+      <div class="ans-panel" id="ansPanel">
+        <div class="ans-label">✅ 解答</div>
+        <div id="ansLines"></div>
+        <div class="ans-note" id="ansNote"></div>
+      </div>
+      <div class="q-nav">
+        <div class="q-nav-top">
+          <span class="nav-count" id="navCount"></span>
+          <button class="btn-quit" onclick="confirmQuit()">テストをやめる</button>
+        </div>
+        <div class="q-nav-btns">
+          <button class="btn-back" id="btnBack" onclick="prevQ()">← 戻る</button>
+          <button class="btn-next" id="btnNext" onclick="nextQ()">次の問題へ →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIT MODAL -->
+<div class="modal-overlay" id="quitModal">
+  <div class="modal-box">
+    <h3>テストをやめますか？</h3>
+    <p>途中でやめると現在の回答はリセットされます。<br>スタート画面に戻ります。</p>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal()">続ける</button>
+      <button class="modal-ok" onclick="resetQuiz()">やめる</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="resultScreen" class="screen">
+  <div class="res-card">
+    <div class="res-hdr">
+      <h2>📋 採点結果</h2>
+      <p>電気理論 確認問題 — 全 50 問</p>
+    </div>
+    <div class="res-body">
+      <div class="score-grid">
+        <div class="score-box sel">
+          <div class="sl">🔘 選択問題 スコア</div>
+          <div class="sv"><span id="rSelOk">0</span><span style="font-size:1rem;font-weight:400"> / <span id="rSelTot">0</span></span></div>
+          <div class="ss">点</div>
+        </div>
+        <div class="score-box desc">
+          <div class="sl">✏️ 記述式 自己採点</div>
+          <div class="sv"><span id="rDescOk">—</span><span style="font-size:1rem;font-weight:400"> / <span id="rDescTot">0</span></span></div>
+          <div class="ss">問（自己採点）</div>
+        </div>
+      </div>
+
+      <div class="self-box">
+        <h3>✏️ 記述式の自己採点（解答ペーパーで確認後に入力）</h3>
+        <div class="self-row">
+          <span>記述式 <b id="selfTotLabel">—</b> 問中</span>
+          <input type="number" id="selfInput" min="0" placeholder="0" oninput="updateSelf(this.value)">
+          <span>問 正解</span>
+        </div>
+      </div>
+
+      <div class="rev-sec">
+        <h3>選択問題 解答一覧</h3>
+        <div id="revList"></div>
+      </div>
+      <button class="btn-retry" onclick="resetQuiz()">🔄 もう一度チャレンジする</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const questions = [
+  // ── 電気物理 ──
+  {id:1,sec:'電気物理',type:'formula',
+   text:'電流の公式を書け。ある断面をt秒間にQ[C]の電気量が通過するとき、電流I[A]を表す式を記述せよ。',
+   ans:['I = Q / t　[A]'],note:'Q:電気量[C]、t:時間[s]'},
+
+  {id:2,sec:'電気物理',type:'unit',
+   text:'電流の単位記号として正しいものはどれか。',
+   opts:['V','A','W','Ω'],cor:1,ans:['A（アンペア）']},
+
+  {id:3,sec:'電気物理',type:'fill',
+   text:'電位の差を（　①　）といい、単位記号は（　②　）を用いる。また、電圧を作り出す力を（　③　）という。',
+   ans:['① 電位差（電圧）　② V（ボルト）　③ 起電力']},
+
+  {id:4,sec:'電気物理',type:'formula',
+   text:'オームの法則を書け。抵抗R[Ω]に電圧V[V]を加えたとき流れる電流I[A]の関係式を記述せよ。',
+   ans:['V = RI　[V]　（または I = V/R [A]）']},
+
+  {id:5,sec:'電気物理',type:'unit',
+   text:'電気抵抗の単位記号として正しいものはどれか。',
+   opts:['S','H','Ω','F'],cor:2,ans:['Ω（オーム）']},
+
+  {id:6,sec:'電気物理',type:'fill',
+   text:'電気抵抗の逆数 G = 1/R を（　①　）といい、単位はジーメンス、単位記号（　②　）を用いる。',
+   ans:['① コンダクタンス　② S']},
+
+  {id:7,sec:'電気物理',type:'formula',
+   text:'導体の電気抵抗の公式を書け。断面積S[m²]、長さl[m]、抵抗率ρ[Ω·m]を用いて抵抗R[Ω]を記述せよ。',
+   ans:['R = ρ × l/S　[Ω]'],note:'ρは抵抗率[Ω·m]'},
+
+  {id:8,sec:'電気物理',type:'unit',
+   text:'抵抗率の単位記号として正しいものはどれか。',
+   opts:['S/m','Ω·m','A/m','H/m'],cor:1,ans:['Ω·m（オームメートル）']},
+
+  {id:9,sec:'電気物理',type:'fill',
+   text:'抵抗率ρの逆数 σ = 1/ρ を（　①　）といい、単位記号は（　②　）を用いる。金属導体は温度が上昇すると抵抗は（　③　）する。',
+   ans:['① 導電率　② S/m（ジーメンス毎メートル）　③ 増加']},
+
+  {id:10,sec:'電気物理',type:'formula',
+   text:'ジュールの法則を書け。抵抗R[Ω]にt秒間電流I[A]が流れるとき発生する熱エネルギーQ[J]を記述せよ。',
+   ans:['Q = I²Rt = VIt　[J]'],note:'電力量W[W·s]と等しい'},
+
+  {id:11,sec:'電気物理',type:'unit',
+   text:'電力量（熱エネルギー）の単位記号として正しいものはどれか。',
+   opts:['W','V·A','J','var'],cor:2,ans:['J（ジュール）または W·s、kW·h']},
+
+  {id:12,sec:'電気物理',type:'fill',
+   text:'電力Pとは（　①　）当たりの電気エネルギーの大きさであり、単位記号（　②　）を用いる。1 kW·h = （　③　）J である。',
+   ans:['① 1秒（単位時間）　② W　③ 3,600,000（3.6×10⁶）'],
+   note:'1kW·h = 1,000×60×60 = 3,600 kJ'},
+
+  {id:13,sec:'電気物理',type:'fill',
+   text:'ゼーベック効果とは、異なる2種類の金属を接続した閉回路の2接合点に（　①　）を与えたとき、閉回路に起電力が発生して電流が流れる現象をいう。',
+   ans:['① 温度差']},
+
+  {id:14,sec:'電気物理',type:'unit',
+   text:'抵抗の温度係数の単位記号として正しいものはどれか。',
+   opts:['℃','℃⁻¹','K','Ω/℃'],cor:1,ans:['℃⁻¹（または K⁻¹）']},
+
+  {id:15,sec:'電気物理',type:'formula',
+   text:'抵抗の温度変化の公式を書け。温度t[℃]における抵抗Rt[Ω]、温度係数αtを用いて、T[℃]における抵抗R_Tを記述せよ。',
+   ans:['R_T = Rt{1 + αt(T − t)}　[Ω]'],note:'αtRtは1℃当たりの増加抵抗'},
+
+  // ── 電磁気 ──
+  {id:16,sec:'電磁気',type:'formula',
+   text:'磁気に関するクーロンの法則を書け。磁極の強さm₁、m₂[Wb]、距離r[m]のとき磁極間に働く力F[N]を記述せよ（真空中）。',
+   ans:['F = K × m₁m₂/r²　[N]','K = 1/(4πμ₀) ≒ 6.33×10⁴'],
+   note:'μ₀は真空の透磁率 = 4π×10⁻⁷ [H/m]'},
+
+  {id:17,sec:'電磁気',type:'unit',
+   text:'磁極の強さの単位記号として正しいものはどれか。',
+   opts:['T','Wb','A/m','H'],cor:1,ans:['Wb（ウェーバ）']},
+
+  {id:18,sec:'電磁気',type:'fill',
+   text:'媒質の磁気的性質によって決まる値を（　①　）といい、真空の透磁率μ₀は（　②　）[H/m]である。真空以外の比（　①　）μr = μ/μ₀ を（　③　）という。',
+   ans:['① 透磁率　② 4π×10⁻⁷　③ 比透磁率'],note:'比透磁率は無名数'},
+
+  {id:19,sec:'電磁気',type:'formula',
+   text:'磁束密度Bの公式を書け。磁束φ[Wb]、断面積S[m²]のとき磁束密度B[T]を記述せよ。',
+   ans:['B = φ/S　[T]']},
+
+  {id:20,sec:'電磁気',type:'unit',
+   text:'磁束密度の単位記号として正しいものはどれか。',
+   opts:['H','Wb','T','A/m'],cor:2,ans:['T（テスラ）']},
+
+  {id:21,sec:'電磁気',type:'fill',
+   text:'直線電流の周囲に生じる磁力線の方向に関する法則を（　①　）の法則という。アンペアの周回路の法則は 2πrH = （　②　）と表される。',
+   ans:['① アンペアの右ネジ　② I（電流[A]）']},
+
+  {id:22,sec:'電磁気',type:'formula',
+   text:'無限長直線電流による磁界の強さHを書け。電流I[A]から距離r[m]の点の磁界H[A/m]を記述せよ。',
+   ans:['H = I/(2πr)　[A/m]'],note:'磁界は電流からの距離に反比例'},
+
+  {id:23,sec:'電磁気',type:'unit',
+   text:'磁界の強さHの単位記号として正しいものはどれか。',
+   opts:['Wb','T','A/m','H/m'],cor:2,ans:['A/m（アンペア毎メートル）']},
+
+  {id:24,sec:'電磁気',type:'fill',
+   text:'コイルの巻回数Nと電流Iの積 F = NI[A] を（　①　）といい、磁気抵抗Rm[H⁻¹]は Rm = （　②　）で表される。',
+   ans:['① 起磁力　② l/(μS)　（lは磁路の長さ、Sは断面積）']},
+
+  {id:25,sec:'電磁気',type:'formula',
+   text:'コイルの自己インダクタンスLの公式を書け。巻数N、透磁率μ[H/m]、断面積S[m²]、磁路長l[m]のときL[H]を記述せよ。',
+   ans:['L = Nφ/I = μSN²/l　[H]'],note:'単位はヘンリー[H]'},
+
+  {id:26,sec:'電磁気',type:'fill',
+   text:'電磁誘導によって生じる誘導起電力の大きさは、コイルを貫く（　①　）の時間的変化量とコイルの（　②　）の積に比例する。この関係を（　③　）の法則という。',
+   ans:['① 磁束　② 巻数　③ ファラデー']},
+
+  {id:27,sec:'電磁気',type:'formula',
+   text:'ファラデーの法則を式で書け。コイルの巻数N、微小時間Δtに磁束がΔφ変化するとき誘導起電力e[V]を記述せよ。',
+   ans:['e = −N × Δφ/Δt　[V]'],note:'マイナスはレンツの法則による'},
+
+  {id:28,sec:'電磁気',type:'fill',
+   text:'電磁誘導によって生じる起電力の向きは、コイルの鎖交磁束の変化を（　①　）方向になる。この関係を（　②　）の法則という。',
+   ans:['① 妨げる　② レンツ']},
+
+  {id:29,sec:'電磁気',type:'formula',
+   text:'平等磁界中の直線導体に働く電磁力F[N]を書け（磁界と電流が直角の場合）。B[T]、I[A]、l[m]を用いよ。',
+   ans:['F = BIl　[N]'],
+   note:'左手：人さし指→磁界方向、中指→電流方向、親指→力の方向'},
+
+  {id:30,sec:'電磁気',type:'fill',
+   text:'フレミングの右手の法則では、（　①　）を磁束密度Bの方向、（　②　）を運動速度vの方向に合わせると、（　③　）が誘導起電力eの方向を示す。',
+   ans:['① 人さし指　② 親指　③ 中指'],note:'発電機の原理に使用する'},
+
+  {id:31,sec:'電磁気',type:'formula',
+   text:'運動する導体に発生する誘導起電力eの公式を書け。磁束密度B[T]、導体長l[m]、速度v[m/s]を用いて記述せよ。',
+   ans:['e = Blv　[V]']},
+
+  {id:32,sec:'電磁気',type:'unit',
+   text:'自己インダクタンスの単位記号として正しいものはどれか。',
+   opts:['F','H','Wb','T'],cor:1,ans:['H（ヘンリー）']},
+
+  // ── 静電気 ──
+  {id:33,sec:'静電気',type:'formula',
+   text:'静電気に関するクーロンの法則を書け。電気量Q₁、Q₂[C]、距離r[m]の2点電荷間に働く静電気力F[N]を真空中で記述せよ。',
+   ans:['F = Ks × Q₁Q₂/r²　[N]','Ks = 1/(4πε₀) ≒ 9×10⁹'],
+   note:'ε₀ = 8.854×10⁻¹² [F/m]'},
+
+  {id:34,sec:'静電気',type:'unit',
+   text:'電気量（電荷）の単位記号として正しいものはどれか。',
+   opts:['A','V','C','F'],cor:2,ans:['C（クーロン）']},
+
+  {id:35,sec:'静電気',type:'fill',
+   text:'真空の誘電率ε₀の値は（　①　）[F/m]である。誘電率εと真空誘電率ε₀の比 εr = ε/ε₀ を（　②　）という。',
+   ans:['① 8.854×10⁻¹²　② 比誘電率'],note:'比誘電率は無名数'},
+
+  {id:36,sec:'静電気',type:'formula',
+   text:'電界の強さEの公式を書け。電界中に正電荷+q[C]を置いたとき作用する力F[N]を用いてE[V/m]を記述せよ。',
+   ans:['E = F/q　[V/m]'],note:'電界は大きさと方向をもつベクトル量'},
+
+  {id:37,sec:'静電気',type:'unit',
+   text:'電界の強さの単位記号として正しいものはどれか。',
+   opts:['C/m²','F/m','V/m','A/m'],cor:2,ans:['V/m（ボルト毎メートル）']},
+
+  {id:38,sec:'静電気',type:'fill',
+   text:'帯電している導体に帯電していない導体を近づけると、帯電体に近い側に帯電体と（　①　）の電荷が現れる現象を（　②　）という。',
+   ans:['① 異種（反対）　② 静電誘導']},
+
+  {id:39,sec:'静電気',type:'formula',
+   text:'静電容量Cの公式を書け。電極に電圧V[V]を印加し電荷Q[C]が蓄えられたとき静電容量C[F]を記述せよ。',
+   ans:['C = Q/V　[F]'],note:'単位はファラド[F]'},
+
+  {id:40,sec:'静電気',type:'fill',
+   text:'真空中の平行平板電極の静電容量 C = ε₀S/d において、Sは（　①　）、dは（　②　）を表す。誘電体を挿入した場合は C = （　③　）·S/d となる。',
+   ans:['① 電極面積[m²]　② 電極間隔[m]　③ εrε₀（誘電率ε）']},
+
+  {id:41,sec:'静電気',type:'formula',
+   text:'コンデンサの並列接続の合成静電容量の公式を書け。C₁、C₂、C₃[F]を並列接続したときの合成静電容量C₀を記述せよ。',
+   ans:['C₀ = C₁ + C₂ + C₃　[F]'],note:'並列は容量の和'},
+
+  {id:42,sec:'静電気',type:'formula',
+   text:'コンデンサに蓄えられるエネルギーWの公式を書け。静電容量C[F]、電圧V[V]のとき蓄えられるエネルギーW[J]を記述せよ。',
+   ans:['W = (1/2)CV² = Q²/(2C)　[J]']},
+
+  // ── 電気回路（直流） ──
+  {id:43,sec:'電気回路',type:'formula',
+   text:'直流回路の直列接続の合成抵抗の公式を書け。R₁、R₂…Rn[Ω]を直列接続したときの合成抵抗Rを記述せよ。',
+   ans:['R = R₁ + R₂ + … + Rn　[Ω]']},
+
+  {id:44,sec:'電気回路',type:'formula',
+   text:'直流回路の並列接続の合成抵抗の公式を書け。R₁、R₂[Ω]を並列接続したときの合成抵抗Rを記述せよ。',
+   ans:['R = R₁R₂/(R₁+R₂)　[Ω]','（または 1/R = 1/R₁ + 1/R₂）'],
+   note:'並列は逆数の和の逆数'},
+
+  {id:45,sec:'電気回路',type:'fill',
+   text:'キルヒホッフの第1法則（電流法則）とは、電気回路の任意の（　①　）において、流入する電流の和と流出する電流の和は（　②　）という法則である。',
+   ans:['① 接続点（節点）　② 等しい'],note:'ΣI_in = ΣI_out'},
+
+  {id:46,sec:'電気回路',type:'fill',
+   text:'キルヒホッフの第2法則（電圧法則）とは、電気回路の任意の（　①　）において、起電力の代数和と電圧降下の代数和は（　②　）という法則である。',
+   ans:['① 閉回路　② 等しい'],note:'ΣE = ΣRI'},
+
+  // ── 電気回路（交流） ──
+  {id:47,sec:'電気回路',type:'formula',
+   text:'正弦波交流の瞬時値の式を書け。最大値Em[V]、角周波数ω[rad/s]のとき瞬時値e[V]を記述せよ。',
+   ans:['e = Em sinωt　[V]','ω = 2πf（fは周波数[Hz]）'],
+   note:'T = 1/f [s]（周期）'},
+
+  {id:48,sec:'電気回路',type:'formula',
+   text:'正弦波交流の実効値Eの公式を書け。最大値Em[V]を用いてE[V]を記述せよ。また実効値の定義も述べよ。',
+   ans:['E = Em/√2 ≒ 0.707Em　[V]','定義：各瞬時値の二乗の平均値の平方根'],
+   note:'実効値は直流と同じ熱を生じる交流の大きさ'},
+
+  {id:49,sec:'電気回路',type:'fill',
+   text:'インダクタンス回路（Lのみ）では、電流iは加えた電圧vより位相が（　①　）だけ（　②　）れる。誘導リアクタンス XL = （　③　）で表される。',
+   ans:['① π/2 [rad]（90°）　② 遅　③ ωL = 2πfL [Ω]'],
+   note:'Lは自己インダクタンス[H]'},
+
+  {id:50,sec:'電気回路',type:'fill',
+   text:'静電容量回路（Cのみ）では、電流iは加えた電圧vより位相が（　①　）だけ（　②　）む。容量リアクタンス Xc = （　③　）で表される。交流回路の有効電力 P = （　④　）で表される。',
+   ans:['① π/2 [rad]（90°）　② 進　③ 1/(ωC) = 1/(2πfC) [Ω]　④ VIcosφ [W]（cosφは力率）'],
+   note:'皮相電力S = VI [V·A]、無効電力Q = VIsinφ [var]'},
+];
+
+// ── 集計 ──
+const selQs  = questions.filter(q => q.type === 'unit');
+const descQs = questions.filter(q => q.type !== 'unit');
+document.getElementById('infoSel').textContent  = selQs.length;
+document.getElementById('infoDesc').textContent = descQs.length;
+
+// ── 状態 ──
+let qi = 0, results = [];
+
+// ── 画面切り替え ──
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ── スタート ──
+function startQuiz() {
+  qi = 0; results = [];
+  showScreen('quizScreen');
+  renderQ();
+  updateProg();
+}
+
+function resetQuiz() {
+  qi = 0; results = [];
+  document.getElementById('selfInput').value = '';
+  document.getElementById('quitModal').classList.remove('show');
+  document.getElementById('hdrVal').textContent = '—';
+  document.getElementById('hdrSub').textContent = 'テスト前';
+  document.getElementById('progBar').style.width = '0%';
+  document.getElementById('progLabel').textContent = '準備中';
+  showScreen('startScreen');
+}
+
+// ── 問題描画 ──
+function renderQ() {
+  const q = questions[qi];
+  const typeLabel = q.type==='formula'?'公式記述':q.type==='unit'?'単位選択':'穴埋め';
+  const pillCls   = q.type==='formula'?'pill-formula':q.type==='unit'?'pill-unit':'pill-fill';
+
+  document.getElementById('qNum').textContent  = `Q${String(q.id).padStart(2,'0')}`;
+  const pill = document.getElementById('qPill');
+  pill.textContent = typeLabel; pill.className = 'q-type-pill '+pillCls;
+  document.getElementById('qSec').textContent  = q.sec;
+  document.getElementById('qText').textContent = q.text;
+
+  // 解答パネルリセット
+  const ap = document.getElementById('ansPanel');
+  ap.classList.remove('show');
+  document.getElementById('ansLines').innerHTML =
+    q.ans.map(a=>`<div class="ans-line">${a}</div>`).join('');
+  document.getElementById('ansNote').textContent = q.note||'';
+
+  // 判定バナーリセット
+  document.getElementById('judge').className = 'judge';
+  document.getElementById('judge').innerHTML = '';
+
+  // ナビボタン制御
+  const btnNext = document.getElementById('btnNext');
+  const btnBack = document.getElementById('btnBack');
+  btnNext.textContent = qi < questions.length-1 ? '次の問題へ →' : '結果を見る';
+  btnBack.disabled = (qi === 0);
+
+  // 選択問題は回答前「次へ」を無効化
+  btnNext.disabled = false;
+
+  // コンテンツ描画
+  const ct = document.getElementById('qContent');
+  ct.innerHTML = '';
+
+  if (q.type === 'unit') {
+    // 既に回答済みかチェック
+    const prev = results.find(r => r.id === q.id);
+    const grid = document.createElement('div');
+    grid.className = 'opts';
+    q.opts.forEach((o,i) => {
+      const b = document.createElement('button');
+      b.className = 'opt'; b.textContent = o;
+      if (prev) {
+        // 回答済み：状態復元
+        b.disabled = true;
+        if (i === q.cor) b.classList.add('reveal');
+        if (!prev.ok && o === prev.selected) b.classList.add('ng');
+      } else {
+        b.onclick = () => selectOpt(q, i, b, grid);
+      }
+      grid.appendChild(b);
+    });
+    ct.appendChild(grid);
+    // 未回答なら次へ無効
+    if (!prev) btnNext.disabled = true;
+    // 既回答なら判定バナー復元
+    if (prev) {
+      const jd = document.getElementById('judge');
+      jd.innerHTML = prev.ok ? '⭕ 正解！　'+prev.ans : '❌ 不正解　正解：'+prev.ans;
+      jd.className = 'judge '+(prev.ok?'ok':'ng');
+    }
+  } else {
+    ct.innerHTML = `<div class="write-box">✏️　手元のペーパーに記述してください</div>`;
+  }
+
+  // カード再アニメ
+  const card = document.getElementById('qCard');
+  card.style.animation = 'none'; card.offsetHeight; card.style.animation='';
+
+  document.getElementById('navCount').textContent = `${qi+1} / ${questions.length} 問`;
+}
+
+// ── 選択問題 回答 ──
+function selectOpt(q, idx, clickedBtn, grid) {
+  // 全ボタン無効化
+  grid.querySelectorAll('.opt').forEach((b,i) => {
+    b.disabled = true;
+    if (i === q.cor) b.classList.add('reveal');
+  });
+  const isOk = idx === q.cor;
+  if (!isOk) clickedBtn.classList.add('ng');
+
+  // バナー
+  const jd = document.getElementById('judge');
+  jd.innerHTML = isOk ? '⭕ 正解！　'+q.ans[0] : '❌ 不正解　正解：'+q.ans[0];
+  jd.className = 'judge '+(isOk?'ok':'ng');
+
+  // 記録
+  results.push({id:q.id, sec:q.sec, type:'unit', text:q.text,
+                ans:q.ans[0], selected:q.opts[idx], ok:isOk});
+  updateProg();
+
+  setTimeout(()=>{ document.getElementById('btnNext').disabled = false; }, 500);
+}
+
+// ── 次へ ──
+function nextQ() {
+  // 記述式：未記録なら記録
+  const q = questions[qi];
+  if (q.type !== 'unit' && !results.find(r=>r.id===q.id)) {
+    results.push({id:q.id, sec:q.sec, type:q.type, text:q.text, desc:true});
+    updateProg();
+  }
+  qi++;
+  if (qi >= questions.length) showResult();
+  else { renderQ(); window.scrollTo({top:0,behavior:'smooth'}); }
+}
+
+// ── 戻る ──
+function prevQ() {
+  if (qi <= 0) return;
+  qi--;
+  renderQ();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── やめる確認 ──
+function confirmQuit() {
+  document.getElementById('quitModal').classList.add('show');
+}
+function closeModal() {
+  document.getElementById('quitModal').classList.remove('show');
+}
+
+// ── 進捗 ──
+function updateProg() {
+  const done = results.length, total = questions.length;
+  document.getElementById('progBar').style.width  = (done/total*100)+'%';
+  document.getElementById('progLabel').textContent = `${done} / ${total} 問 完了`;
+  document.getElementById('hdrVal').textContent   = done;
+  document.getElementById('hdrSub').textContent   = '問 完了';
+}
+
+// ── 結果 ──
+function showResult() {
+  showScreen('resultScreen');
+  const selR  = results.filter(r=>r.type==='unit');
+  const selOk = selR.filter(r=>r.ok).length;
+  document.getElementById('rSelOk').textContent   = selOk;
+  document.getElementById('rSelTot').textContent  = selQs.length;
+  document.getElementById('rDescTot').textContent = descQs.length;
+  document.getElementById('selfTotLabel').textContent = descQs.length;
+  document.getElementById('rDescOk').textContent  = '—';
+  document.getElementById('selfInput').max        = descQs.length;
+
+  document.getElementById('hdrVal').textContent = `${selOk}/${selQs.length}`;
+  document.getElementById('hdrSub').textContent = '選択問題';
+  document.getElementById('progBar').style.width = '100%';
+  document.getElementById('progLabel').textContent = '全問完了';
+
+  // 解答一覧（選択問題）
+  const list = document.getElementById('revList');
+  list.innerHTML = '';
+  selR.forEach(r => {
+    const div = document.createElement('div');
+    div.className = 'rev-item';
+    div.innerHTML = `
+      <div class="rev-hdr">
+        <span class="rev-stamp ${r.ok?'st-ok':'st-ng'}">${r.ok?'⭕ 正解':'❌ 不正解'}</span>
+        <span style="color:var(--gray);font-size:.73rem;">Q${String(r.id).padStart(2,'0')} ${r.sec}</span>
+        ${!r.ok?`<span style="margin-left:auto;font-size:.73rem;color:#888;">あなたの回答：${r.selected}</span>`:''}
+      </div>
+      <div class="rev-q">${r.text}</div>
+      <div class="rev-ans">正解：${r.ans}</div>`;
+    list.appendChild(div);
+  });
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── 自己採点 ──
+function updateSelf(v) {
+  const n = Math.min(Math.max(parseInt(v)||0, 0), descQs.length);
+  document.getElementById('rDescOk').textContent = n;
+}
+</script>
+</body>
+</html>
