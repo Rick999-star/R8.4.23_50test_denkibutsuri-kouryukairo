@@ -59,11 +59,12 @@ header .sub{font-size:.7rem;color:var(--gray);margin-top:3px;}
 /* 選択肢 */
 .opts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:4px;}
 .opt{border:2px solid #c8d8ee;background:#f7f9fd;border-radius:8px;padding:12px 10px;font-family:'Noto Sans JP',sans-serif;font-size:.9rem;cursor:pointer;transition:all .15s;text-align:center;font-weight:500;}
-.opt:not(:disabled):hover{border-color:var(--orange);background:#fff5ee;}
-.opt.ok{border-color:var(--ok);background:var(--ok-bg);color:var(--ok);pointer-events:none;}
-.opt.ng{border-color:var(--ng);background:var(--ng-bg);color:var(--ng);pointer-events:none;}
-.opt.reveal{border-color:var(--ok);background:var(--ok-bg);color:var(--ok);pointer-events:none;}
-.opt:disabled{pointer-events:none;}
+.opt:not(.locked):hover{border-color:var(--orange);background:#fff5ee;}
+.opt.selected{border-color:var(--navy);background:var(--navy);color:#fff;}
+.opt.ok{border-color:var(--ok);background:var(--ok-bg);color:var(--ok);}
+.opt.ng{border-color:var(--ng);background:var(--ng-bg);color:var(--ng);}
+.opt.reveal{border-color:var(--ok);background:var(--ok-bg);color:var(--ok);}
+.opt.locked{pointer-events:none;}
 
 /* 記述エリア */
 .write-box{border:2px dashed #c8d8ee;border-radius:8px;background:#f7f9fd;padding:18px;min-height:66px;color:var(--gray);font-size:.8rem;text-align:center;margin-bottom:12px;}
@@ -164,10 +165,11 @@ header .sub{font-size:.7rem;color:var(--gray);margin-top:3px;}
     <p>問題は1問ずつ表示されます。<br>
        <b>選択問題</b>は選んだら自動で次へ進みます。<br>
        <b>記述式</b>は手元のペーパーに書いてから解答を確認してください。</p>
-    <div class="info-grid">
+    <div class="info-grid" style="grid-template-columns:repeat(4,1fr);">
       <div class="info-box"><strong>50</strong>問　合計</div>
       <div class="info-box"><strong id="infoSel">—</strong>問　選択式</div>
-      <div class="info-box"><strong id="infoDesc">—</strong>問　記述式</div>
+      <div class="info-box"><strong id="infoFormula">—</strong>問　公式記述</div>
+      <div class="info-box"><strong id="infoFill">—</strong>問　穴埋め</div>
     </div>
     <button class="btn-start" onclick="startQuiz()">テストを開始する</button>
   </div>
@@ -224,24 +226,37 @@ header .sub{font-size:.7rem;color:var(--gray);margin-top:3px;}
       <p>電気理論 確認問題 — 全 50 問</p>
     </div>
     <div class="res-body">
-      <div class="score-grid">
+      <p id="unansweredNote" style="display:none;color:var(--ng);font-size:.82rem;margin-bottom:14px;padding:8px 12px;background:var(--ng-bg);border-radius:6px;"></p>
+      <div class="score-grid" style="grid-template-columns:1fr 1fr 1fr;">
         <div class="score-box sel">
           <div class="sl">🔘 選択問題 スコア</div>
           <div class="sv"><span id="rSelOk">0</span><span style="font-size:1rem;font-weight:400"> / <span id="rSelTot">0</span></span></div>
           <div class="ss">点</div>
         </div>
         <div class="score-box desc">
-          <div class="sl">✏️ 記述式 自己採点</div>
-          <div class="sv"><span id="rDescOk">—</span><span style="font-size:1rem;font-weight:400"> / <span id="rDescTot">0</span></span></div>
+          <div class="sl">✏️ 公式記述 自己採点</div>
+          <div class="sv"><span id="rFormulaOk">—</span><span style="font-size:1rem;font-weight:400"> / <span id="rFormulaTot">0</span></span></div>
+          <div class="ss">問（自己採点）</div>
+        </div>
+        <div class="score-box desc" style="background:#f0f9ff;border-color:#7dd3fc;">
+          <div class="sl">📝 穴埋め 自己採点</div>
+          <div class="sv" style="color:#0369a1;"><span id="rFillOk">—</span><span style="font-size:1rem;font-weight:400"> / <span id="rFillTot">0</span></span></div>
           <div class="ss">問（自己採点）</div>
         </div>
       </div>
 
       <div class="self-box">
         <h3>✏️ 記述式の自己採点（解答ペーパーで確認後に入力）</h3>
+        <div class="self-row" style="margin-bottom:10px;">
+          <span>公式記述 <b id="selfFormulaTot">—</b> 問中</span>
+          <input type="number" id="selfFormulaInput" min="0" placeholder="0"
+            oninput="updateSelfFormula(this.value)">
+          <span>問 正解</span>
+        </div>
         <div class="self-row">
-          <span>記述式 <b id="selfTotLabel">—</b> 問中</span>
-          <input type="number" id="selfInput" min="0" placeholder="0" oninput="updateSelf(this.value)">
+          <span>穴埋め　 <b id="selfFillTot">—</b> 問中</span>
+          <input type="number" id="selfFillInput" min="0" placeholder="0"
+            oninput="updateSelfFill(this.value)">
           <span>問 正解</span>
         </div>
       </div>
@@ -475,11 +490,16 @@ const questions = [
 // ── 集計 ──
 const selQs  = questions.filter(q => q.type === 'unit');
 const descQs = questions.filter(q => q.type !== 'unit');
-document.getElementById('infoSel').textContent  = selQs.length;
-document.getElementById('infoDesc').textContent = descQs.length;
+const formulaQs = questions.filter(q => q.type === 'formula');
+const fillQs    = questions.filter(q => q.type === 'fill');
+document.getElementById('infoSel').textContent     = selQs.length;
+document.getElementById('infoFormula').textContent = formulaQs.length;
+document.getElementById('infoFill').textContent    = fillQs.length;
 
 // ── 状態 ──
-let qi = 0, results = [];
+// answers: { [id]: selectedIndex }  選択中の回答（未採点・変更可）
+// results: 採点後の結果配列（採点ボタン押下後に確定）
+let qi = 0, answers = {}, results = [];
 
 // ── 画面切り替え ──
 function showScreen(id) {
@@ -489,15 +509,16 @@ function showScreen(id) {
 
 // ── スタート ──
 function startQuiz() {
-  qi = 0; results = [];
+  qi = 0; answers = {}; results = [];
   showScreen('quizScreen');
   renderQ();
   updateProg();
 }
 
 function resetQuiz() {
-  qi = 0; results = [];
-  document.getElementById('selfInput').value = '';
+  qi = 0; answers = {}; results = [];
+  document.getElementById('selfFormulaInput').value = '';
+  document.getElementById('selfFillInput').value = '';
   document.getElementById('quitModal').classList.remove('show');
   document.getElementById('hdrVal').textContent = '—';
   document.getElementById('hdrSub').textContent = 'テスト前';
@@ -512,108 +533,84 @@ function renderQ() {
   const typeLabel = q.type==='formula'?'公式記述':q.type==='unit'?'単位選択':'穴埋め';
   const pillCls   = q.type==='formula'?'pill-formula':q.type==='unit'?'pill-unit':'pill-fill';
 
-  document.getElementById('qNum').textContent  = `Q${String(q.id).padStart(2,'0')}`;
+  document.getElementById('qNum').textContent = `Q${String(q.id).padStart(2,'0')}`;
   const pill = document.getElementById('qPill');
   pill.textContent = typeLabel; pill.className = 'q-type-pill '+pillCls;
   document.getElementById('qSec').textContent  = q.sec;
   document.getElementById('qText').textContent = q.text;
 
-  // 解答パネルリセット
-  const ap = document.getElementById('ansPanel');
-  ap.classList.remove('show');
+  // 解答パネル・判定バナーリセット
+  document.getElementById('ansPanel').classList.remove('show');
   document.getElementById('ansLines').innerHTML =
     q.ans.map(a=>`<div class="ans-line">${a}</div>`).join('');
   document.getElementById('ansNote').textContent = q.note||'';
-
-  // 判定バナーリセット
   document.getElementById('judge').className = 'judge';
   document.getElementById('judge').innerHTML = '';
 
-  // ナビボタン制御
+  // ナビボタン
   const btnNext = document.getElementById('btnNext');
   const btnBack = document.getElementById('btnBack');
-  btnNext.textContent = qi < questions.length-1 ? '次の問題へ →' : '結果を見る';
+  const isLast  = qi === questions.length - 1;
+  btnNext.textContent = isLast ? '採点する ✓' : '次の問題へ →';
   btnBack.disabled = (qi === 0);
-
-  // 選択問題は回答前「次へ」を無効化
-  btnNext.disabled = false;
 
   // コンテンツ描画
   const ct = document.getElementById('qContent');
   ct.innerHTML = '';
 
   if (q.type === 'unit') {
-    // 既に回答済みかチェック
-    const prev = results.find(r => r.id === q.id);
+    const saved = answers[q.id];  // 保存済み選択（インデックス or undefined）
     const grid = document.createElement('div');
     grid.className = 'opts';
-    q.opts.forEach((o,i) => {
+    q.opts.forEach((o, i) => {
       const b = document.createElement('button');
-      b.className = 'opt'; b.textContent = o;
-      if (prev) {
-        // 回答済み：状態復元
-        b.disabled = true;
-        if (i === q.cor) b.classList.add('reveal');
-        if (!prev.ok && o === prev.selected) b.classList.add('ng');
-      } else {
-        b.onclick = () => selectOpt(q, i, b, grid);
-      }
+      b.className = 'opt';
+      b.textContent = o;
+      // 保存済みなら選択状態を復元
+      if (saved !== undefined && saved === i) b.classList.add('selected');
+      b.onclick = () => chooseOpt(q, i, grid);
       grid.appendChild(b);
     });
     ct.appendChild(grid);
-    // 未回答なら次へ無効
-    if (!prev) btnNext.disabled = true;
-    // 既回答なら判定バナー復元
-    if (prev) {
-      const jd = document.getElementById('judge');
-      jd.innerHTML = prev.ok ? '⭕ 正解！　'+prev.ans : '❌ 不正解　正解：'+prev.ans;
-      jd.className = 'judge '+(prev.ok?'ok':'ng');
-    }
   } else {
     ct.innerHTML = `<div class="write-box">✏️　手元のペーパーに記述してください</div>`;
   }
 
+  // 進捗表示（選択問題の回答済み数）
+  const selAnswered = selQs.filter(q => answers[q.id] !== undefined).length;
+  document.getElementById('hdrVal').textContent = selAnswered;
+  document.getElementById('hdrSub').textContent = `/ ${selQs.length} 選択済み`;
+
   // カード再アニメ
   const card = document.getElementById('qCard');
-  card.style.animation = 'none'; card.offsetHeight; card.style.animation='';
+  card.style.animation = 'none'; card.offsetHeight; card.style.animation = '';
 
   document.getElementById('navCount').textContent = `${qi+1} / ${questions.length} 問`;
+  updateProg();
 }
 
-// ── 選択問題 回答 ──
-function selectOpt(q, idx, clickedBtn, grid) {
-  // 全ボタン無効化
-  grid.querySelectorAll('.opt').forEach((b,i) => {
-    b.disabled = true;
-    if (i === q.cor) b.classList.add('reveal');
+// ── 選択肢を選ぶ（即採点せず保存のみ） ──
+function chooseOpt(q, idx, grid) {
+  // 回答を上書き保存（何度でも変更可）
+  answers[q.id] = idx;
+
+  // ボタンのvisualを更新
+  grid.querySelectorAll('.opt').forEach((b, i) => {
+    b.classList.toggle('selected', i === idx);
   });
-  const isOk = idx === q.cor;
-  if (!isOk) clickedBtn.classList.add('ng');
 
-  // バナー
-  const jd = document.getElementById('judge');
-  jd.innerHTML = isOk ? '⭕ 正解！　'+q.ans[0] : '❌ 不正解　正解：'+q.ans[0];
-  jd.className = 'judge '+(isOk?'ok':'ng');
-
-  // 記録
-  results.push({id:q.id, sec:q.sec, type:'unit', text:q.text,
-                ans:q.ans[0], selected:q.opts[idx], ok:isOk});
   updateProg();
-
-  setTimeout(()=>{ document.getElementById('btnNext').disabled = false; }, 500);
 }
 
 // ── 次へ ──
 function nextQ() {
-  // 記述式：未記録なら記録
-  const q = questions[qi];
-  if (q.type !== 'unit' && !results.find(r=>r.id===q.id)) {
-    results.push({id:q.id, sec:q.sec, type:q.type, text:q.text, desc:true});
-    updateProg();
-  }
   qi++;
-  if (qi >= questions.length) showResult();
-  else { renderQ(); window.scrollTo({top:0,behavior:'smooth'}); }
+  if (qi >= questions.length) {
+    scoreAndShowResult();
+  } else {
+    renderQ();
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
 }
 
 // ── 戻る ──
@@ -621,67 +618,109 @@ function prevQ() {
   if (qi <= 0) return;
   qi--;
   renderQ();
-  window.scrollTo({top:0,behavior:'smooth'});
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
 // ── やめる確認 ──
-function confirmQuit() {
-  document.getElementById('quitModal').classList.add('show');
-}
-function closeModal() {
-  document.getElementById('quitModal').classList.remove('show');
-}
+function confirmQuit() { document.getElementById('quitModal').classList.add('show'); }
+function closeModal()   { document.getElementById('quitModal').classList.remove('show'); }
 
-// ── 進捗 ──
+// ── 進捗バー ──
 function updateProg() {
-  const done = results.length, total = questions.length;
-  document.getElementById('progBar').style.width  = (done/total*100)+'%';
-  document.getElementById('progLabel').textContent = `${done} / ${total} 問 完了`;
-  document.getElementById('hdrVal').textContent   = done;
-  document.getElementById('hdrSub').textContent   = '問 完了';
+  // 選択問題の回答済み数 ＋ 記述式の通過数でカウント
+  const selDone  = selQs.filter(q => answers[q.id] !== undefined).length;
+  const descDone = Math.min(qi, descQs.length);  // 通過した問題数で概算
+  const total    = questions.length;
+  const pct      = Math.round((qi / total) * 100);
+  document.getElementById('progBar').style.width  = pct + '%';
+  document.getElementById('progLabel').textContent =
+    `${qi} / ${total} 問 通過　選択回答済 ${selDone} / ${selQs.length}`;
 }
 
-// ── 結果 ──
+// ── 採点して結果画面へ ──
+function scoreAndShowResult() {
+  results = [];
+
+  // 選択問題を採点
+  selQs.forEach(q => {
+    const selIdx = answers[q.id];
+    const ok     = selIdx !== undefined && selIdx === q.cor;
+    results.push({
+      id: q.id, sec: q.sec, type: 'unit', text: q.text,
+      ans: q.ans[0],
+      selected: selIdx !== undefined ? q.opts[selIdx] : '未回答',
+      ok: ok,
+      unanswered: selIdx === undefined
+    });
+  });
+
+  showResult();
+}
+
+// ── 結果画面 ──
 function showResult() {
   showScreen('resultScreen');
-  const selR  = results.filter(r=>r.type==='unit');
-  const selOk = selR.filter(r=>r.ok).length;
-  document.getElementById('rSelOk').textContent   = selOk;
-  document.getElementById('rSelTot').textContent  = selQs.length;
-  document.getElementById('rDescTot').textContent = descQs.length;
-  document.getElementById('selfTotLabel').textContent = descQs.length;
-  document.getElementById('rDescOk').textContent  = '—';
-  document.getElementById('selfInput').max        = descQs.length;
+
+  const selOk       = results.filter(r => r.ok).length;
+  const unanswered  = results.filter(r => r.unanswered).length;
+
+  document.getElementById('rSelOk').textContent      = selOk;
+  document.getElementById('rSelTot').textContent     = selQs.length;
+  document.getElementById('rFormulaTot').textContent = formulaQs.length;
+  document.getElementById('rFillTot').textContent    = fillQs.length;
+  document.getElementById('rFormulaOk').textContent  = '—';
+  document.getElementById('rFillOk').textContent     = '—';
+  document.getElementById('selfFormulaTot').textContent = formulaQs.length;
+  document.getElementById('selfFillTot').textContent    = fillQs.length;
+  document.getElementById('selfFormulaInput').max = formulaQs.length;
+  document.getElementById('selfFillInput').max    = fillQs.length;
 
   document.getElementById('hdrVal').textContent = `${selOk}/${selQs.length}`;
   document.getElementById('hdrSub').textContent = '選択問題';
   document.getElementById('progBar').style.width = '100%';
   document.getElementById('progLabel').textContent = '全問完了';
 
+  // 未回答の注記
+  const noteEl = document.getElementById('unansweredNote');
+  if (unanswered > 0) {
+    noteEl.textContent = `※ 未回答の選択問題が ${unanswered} 問あります。`;
+    noteEl.style.display = 'block';
+  } else {
+    noteEl.style.display = 'none';
+  }
+
   // 解答一覧（選択問題）
   const list = document.getElementById('revList');
   list.innerHTML = '';
-  selR.forEach(r => {
+  results.forEach(r => {
     const div = document.createElement('div');
     div.className = 'rev-item';
+    const stampClass = r.unanswered ? 'st-skip' : (r.ok ? 'st-ok' : 'st-ng');
+    const stampLabel = r.unanswered ? '— 未回答' : (r.ok ? '⭕ 正解' : '❌ 不正解');
     div.innerHTML = `
       <div class="rev-hdr">
-        <span class="rev-stamp ${r.ok?'st-ok':'st-ng'}">${r.ok?'⭕ 正解':'❌ 不正解'}</span>
+        <span class="rev-stamp ${stampClass}">${stampLabel}</span>
         <span style="color:var(--gray);font-size:.73rem;">Q${String(r.id).padStart(2,'0')} ${r.sec}</span>
-        ${!r.ok?`<span style="margin-left:auto;font-size:.73rem;color:#888;">あなたの回答：${r.selected}</span>`:''}
+        ${!r.ok && !r.unanswered
+          ? `<span style="margin-left:auto;font-size:.73rem;color:#888;">あなたの回答：${r.selected}</span>`
+          : ''}
       </div>
       <div class="rev-q">${r.text}</div>
       <div class="rev-ans">正解：${r.ans}</div>`;
     list.appendChild(div);
   });
 
-  window.scrollTo({top:0,behavior:'smooth'});
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
 // ── 自己採点 ──
-function updateSelf(v) {
-  const n = Math.min(Math.max(parseInt(v)||0, 0), descQs.length);
-  document.getElementById('rDescOk').textContent = n;
+function updateSelfFormula(v) {
+  const n = Math.min(Math.max(parseInt(v)||0, 0), formulaQs.length);
+  document.getElementById('rFormulaOk').textContent = n;
+}
+function updateSelfFill(v) {
+  const n = Math.min(Math.max(parseInt(v)||0, 0), fillQs.length);
+  document.getElementById('rFillOk').textContent = n;
 }
 </script>
 </body>
