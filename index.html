@@ -6,57 +6,60 @@
 <title>電気理論 確認問題 50問</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@400;700&display=swap');
-:root {
-  --navy:#0d1b2a; --navy2:#1a2e45; --navy3:#243d5c;
-  --orange:#e86a2f; --orange2:#f5924e; --gold:#d4a843;
-  --white:#f5f3ee; --gray:#8899aa; --light:#eef2f7;
-  --ok:#2d8a5e; --ng:#c0392b; --ok-bg:#e8f7ef; --ng-bg:#fde8e8;
+:root{
+  --navy:#0d1b2a;--navy2:#1a2e45;--navy3:#243d5c;
+  --orange:#e86a2f;--orange2:#f5924e;--gold:#d4a843;
+  --white:#f5f3ee;--gray:#8899aa;--light:#eef2f7;
+  --ok:#2d8a5e;--ng:#c0392b;--ok-bg:#e8f7ef;--ng-bg:#fde8e8;
+  --half:#b8860b;--half-bg:#fef9e7;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Noto Sans JP',sans-serif;background:var(--white);color:var(--navy);min-height:100vh;}
 
-/* HEADER */
+/* ── HEADER ── */
 header{background:var(--navy);padding:18px 24px 14px;border-bottom:3px solid var(--orange);display:flex;align-items:center;gap:14px;}
 header h1{font-family:'Noto Serif JP',serif;font-size:1.25rem;color:#fff;font-weight:700;}
 header .sub{font-size:.7rem;color:var(--gray);margin-top:3px;}
 .hdr-badge{margin-left:auto;background:var(--navy3);border-radius:8px;padding:7px 14px;text-align:center;color:#cdd;font-size:.72rem;}
 .hdr-badge strong{display:block;font-size:1.35rem;color:var(--gold);font-weight:900;line-height:1.1;}
 
-/* PROGRESS */
+/* ── PROGRESS ── */
 .prog-wrap{background:var(--navy2);padding:7px 24px;display:flex;align-items:center;gap:10px;}
 .prog-outer{flex:1;height:5px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden;}
 .prog-inner{height:100%;background:var(--orange);border-radius:3px;transition:width .4s;width:0%;}
 .prog-label{font-size:.7rem;color:#cdd;white-space:nowrap;}
 
-/* SCREENS */
-.screen{display:none;} .screen.active{display:block;}
+/* ── SCREENS ── */
+.screen{display:none;}.screen.active{display:block;}
 
 /* ── START ── */
-#startScreen{max-width:600px;margin:44px auto;padding:0 18px;text-align:center;}
+#startScreen{max-width:640px;margin:44px auto;padding:0 18px;text-align:center;}
 .start-card{background:#fff;border-radius:14px;padding:36px 32px;box-shadow:0 4px 24px rgba(0,0,0,.1);}
 .start-card h2{font-family:'Noto Serif JP',serif;font-size:1.3rem;margin-bottom:14px;}
 .start-card p{font-size:.88rem;line-height:1.9;color:#445;margin-bottom:6px;}
-.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0;}
-.info-box{background:var(--light);border-radius:8px;padding:13px 6px;font-size:.76rem;color:var(--navy2);}
-.info-box strong{display:block;font-size:1.25rem;color:var(--orange);margin-bottom:2px;}
+.info-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:22px 0;}
+.info-box{background:var(--light);border-radius:8px;padding:13px 6px;font-size:.75rem;color:var(--navy2);}
+.info-box strong{display:block;font-size:1.2rem;color:var(--orange);margin-bottom:2px;}
+.api-key-box{background:var(--light);border-radius:10px;padding:16px 18px;margin:16px 0;text-align:left;}
+.api-key-box label{font-size:.8rem;font-weight:700;display:block;margin-bottom:6px;color:var(--navy2);}
+.api-key-box input{width:100%;padding:8px 12px;border:1.5px solid #c8d8ee;border-radius:6px;font-size:.88rem;font-family:'Noto Sans JP',sans-serif;}
+.api-key-note{font-size:.72rem;color:var(--gray);margin-top:4px;}
 .btn-start{background:var(--orange);color:#fff;border:none;padding:13px 44px;border-radius:8px;font-size:.97rem;font-family:'Noto Sans JP',sans-serif;font-weight:700;cursor:pointer;transition:background .2s;margin-top:6px;}
 .btn-start:hover{background:var(--orange2);}
 
 /* ── QUIZ ── */
-#quizScreen{max-width:680px;margin:0 auto;padding:24px 18px 80px;}
+#quizScreen{max-width:720px;margin:0 auto;padding:24px 18px 80px;}
 .q-card{background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.08);overflow:hidden;animation:fadeUp .28s ease;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .q-card-hdr{background:var(--navy);padding:13px 18px;display:flex;align-items:center;gap:9px;}
 .q-num-badge{background:var(--orange);color:#fff;font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:12px;letter-spacing:.05em;}
 .q-type-pill{font-size:.66rem;font-weight:700;padding:2px 9px;border-radius:10px;}
-.pill-formula{background:#dbeafe;color:#1e3a8a;}
-.pill-unit{background:#fef3c7;color:#92400e;}
-.pill-fill{background:#d1fae5;color:#065f46;}
+.pill-formula{background:#dbeafe;color:#1e3a8a;}.pill-unit{background:#fef3c7;color:#92400e;}.pill-fill{background:#d1fae5;color:#065f46;}
 .q-sec{font-size:.66rem;color:var(--gray);margin-left:auto;}
 .q-body{padding:20px 20px 16px;}
 .q-text{font-family:'Noto Serif JP',serif;font-size:.95rem;line-height:1.85;color:#1a2030;margin-bottom:16px;}
 
-/* 選択肢 */
+/* ── 選択肢 ── */
 .opts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:4px;}
 .opt{border:2px solid #c8d8ee;background:#f7f9fd;border-radius:8px;padding:12px 10px;font-family:'Noto Sans JP',sans-serif;font-size:.9rem;cursor:pointer;transition:all .15s;text-align:center;font-weight:500;}
 .opt:not(.locked):hover{border-color:var(--orange);background:#fff5ee;}
@@ -66,22 +69,61 @@ header .sub{font-size:.7rem;color:var(--gray);margin-top:3px;}
 .opt.reveal{border-color:var(--ok);background:var(--ok-bg);color:var(--ok);}
 .opt.locked{pointer-events:none;}
 
-/* 記述エリア */
-.write-box{border:2px dashed #c8d8ee;border-radius:8px;background:#f7f9fd;padding:18px;min-height:66px;color:var(--gray);font-size:.8rem;text-align:center;margin-bottom:12px;}
+/* ── 公式入力エリア ── */
+.formula-input-wrap{margin-bottom:14px;}
+.formula-input-label{font-size:.75rem;font-weight:700;color:var(--navy2);margin-bottom:6px;display:block;}
+.formula-textarea{
+  width:100%;min-height:90px;padding:12px 14px;
+  border:2px solid #c8d8ee;border-radius:8px;
+  font-family:'Noto Sans JP',monospace;font-size:1rem;
+  background:#f7f9fd;resize:vertical;
+  transition:border-color .15s;line-height:1.7;
+}
+.formula-textarea:focus{outline:none;border-color:var(--navy);background:#fff;}
+.formula-hint{font-size:.72rem;color:var(--gray);margin-top:4px;}
+.formula-hint code{background:#e8edf5;padding:1px 5px;border-radius:3px;font-size:.78rem;}
 
-/* 判定バナー */
+/* ── 穴埋め入力エリア ── */
+.fill-wrap{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.fill-item{display:flex;align-items:center;gap:10px;background:var(--light);border-radius:8px;padding:10px 12px;}
+.fill-num{
+  min-width:32px;height:32px;border-radius:50%;
+  background:var(--navy);color:#fff;
+  font-size:.8rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.fill-input{
+  flex:1;padding:8px 12px;
+  border:1.5px solid #c8d8ee;border-radius:6px;
+  font-family:'Noto Sans JP',sans-serif;font-size:.92rem;
+  background:#fff;transition:border-color .15s;
+}
+.fill-input:focus{outline:none;border-color:var(--navy);}
+
+/* ── 判定バナー ── */
 .judge{display:none;border-radius:8px;padding:11px 15px;font-size:.86rem;font-weight:700;margin-top:10px;align-items:center;gap:6px;}
 .judge.ok{background:var(--ok-bg);color:var(--ok);display:flex;}
 .judge.ng{background:var(--ng-bg);color:var(--ng);display:flex;}
 
-/* 解答パネル（記述式） */
-.ans-panel{display:none;margin-top:12px;border-left:4px solid var(--ok);background:var(--ok-bg);border-radius:0 8px 8px 0;padding:13px 15px;}
-.ans-panel.show{display:block;}
-.ans-label{font-size:.7rem;font-weight:700;color:var(--ok);margin-bottom:5px;letter-spacing:.05em;}
-.ans-line{font-family:'Noto Serif JP',serif;font-size:.93rem;background:#fff;padding:4px 9px;border-radius:4px;margin:2px 0;border:1px solid #b8dbc8;display:inline-block;}
-.ans-note{font-size:.76rem;color:#555;margin-top:5px;}
+/* ── AI採点中インジケーター ── */
+.ai-scoring{display:none;align-items:center;gap:10px;margin-top:12px;padding:12px 16px;background:#f0f4ff;border-radius:8px;font-size:.84rem;color:#334;}
+.ai-scoring.show{display:flex;}
+.ai-scoring-spinner{width:18px;height:18px;border:2.5px solid #c8d8ee;border-top-color:var(--navy);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-/* ナビ */
+/* ── AI採点結果パネル ── */
+.ai-result-panel{display:none;margin-top:12px;border-radius:8px;overflow:hidden;}
+.ai-result-panel.show{display:block;}
+.ai-result-header{display:flex;align-items:center;gap:8px;padding:10px 14px;font-size:.8rem;font-weight:700;}
+.ai-result-header.full{background:var(--ok-bg);color:var(--ok);}
+.ai-result-header.half{background:var(--half-bg);color:var(--half);}
+.ai-result-header.zero{background:var(--ng-bg);color:var(--ng);}
+.ai-result-body{padding:10px 14px;font-size:.84rem;line-height:1.7;color:#334;background:#fafbfd;border:1px solid #dde4ee;border-top:none;border-radius:0 0 8px 8px;}
+.ai-result-score{font-size:1.1rem;font-weight:900;margin-left:auto;}
+.model-ans{margin-top:8px;padding:8px 10px;background:#fff;border-radius:6px;border:1px solid #c8d8ee;font-size:.8rem;}
+.model-ans-label{font-size:.7rem;font-weight:700;color:var(--gray);margin-bottom:3px;}
+
+/* ── ナビ ── */
 .q-nav{margin-top:18px;}
 .q-nav-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
 .nav-count{font-size:.78rem;color:var(--gray);}
@@ -92,7 +134,20 @@ header .sub{font-size:.7rem;color:var(--gray);margin-top:3px;}
 .btn-back:hover:not(:disabled){background:var(--light);}
 .btn-back:disabled{opacity:.35;cursor:default;}
 .btn-next{background:var(--navy);color:#fff;border:none;padding:10px 28px;border-radius:7px;font-family:'Noto Sans JP',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer;transition:background .2s;}
-.btn-next:hover{background:var(--navy3);}
+.btn-next:hover:not(:disabled){background:var(--navy3);}
+.btn-next:disabled{opacity:.4;cursor:default;}
+
+/* ── AI採点ボタン ── */
+.btn-ai-score{
+  background:linear-gradient(135deg,#4f46e5,#7c3aed);
+  color:#fff;border:none;padding:10px 22px;border-radius:7px;
+  font-family:'Noto Sans JP',sans-serif;font-weight:700;font-size:.86rem;
+  cursor:pointer;display:none;transition:opacity .2s;
+}
+.btn-ai-score:hover{opacity:.88;}
+.btn-ai-score:disabled{opacity:.4;cursor:default;}
+
+/* ── モーダル ── */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:center;justify-content:center;}
 .modal-overlay.show{display:flex;}
 .modal-box{background:#fff;border-radius:12px;padding:28px 28px 22px;max-width:340px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.2);}
@@ -104,40 +159,59 @@ header .sub{font-size:.7rem;color:var(--gray);margin-top:3px;}
 .modal-ok{background:var(--ng);color:#fff;}
 
 /* ── RESULT ── */
-#resultScreen{max-width:680px;margin:36px auto;padding:0 18px 80px;}
+#resultScreen{max-width:720px;margin:36px auto;padding:0 18px 80px;}
 .res-card{background:#fff;border-radius:14px;box-shadow:0 4px 24px rgba(0,0,0,.1);overflow:hidden;}
 .res-hdr{background:var(--navy);padding:22px 26px;border-bottom:3px solid var(--orange);}
 .res-hdr h2{font-family:'Noto Serif JP',serif;font-size:1.2rem;color:#fff;}
 .res-hdr p{font-size:.74rem;color:var(--gray);margin-top:3px;}
 .res-body{padding:26px;}
-.score-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;}
-.score-box{border-radius:10px;padding:18px;text-align:center;}
+.score-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:22px;}
+.score-box{border-radius:10px;padding:16px;text-align:center;}
 .score-box.sel{background:#eef4ff;border:2px solid #93c5fd;}
-.score-box.desc{background:#f0fdf4;border:2px solid #86efac;}
-.score-box .sl{font-size:.72rem;color:var(--gray);margin-bottom:6px;}
-.score-box .sv{font-size:2rem;font-weight:900;}
+.score-box.formula{background:#f0fdf4;border:2px solid #86efac;}
+.score-box.fill{background:#f0f9ff;border:2px solid #7dd3fc;}
+.score-box .sl{font-size:.7rem;color:var(--gray);margin-bottom:6px;}
+.score-box .sv{font-size:1.8rem;font-weight:900;}
 .score-box.sel .sv{color:#1d4ed8;}
-.score-box.desc .sv{color:var(--ok);}
-.score-box .ss{font-size:.76rem;color:#666;margin-top:3px;}
+.score-box.formula .sv{color:var(--ok);}
+.score-box.fill .sv{color:#0369a1;}
+.score-box .ss{font-size:.72rem;color:#666;margin-top:3px;}
 
-/* 自己採点 */
-.self-box{background:var(--light);border-radius:10px;padding:16px 18px;margin-bottom:22px;}
-.self-box h3{font-size:.88rem;font-weight:700;margin-bottom:10px;}
-.self-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.86rem;}
-.self-row input{width:60px;padding:5px 7px;border:1.5px solid #c8d8ee;border-radius:6px;font-size:.97rem;font-weight:700;text-align:center;font-family:'Noto Sans JP',sans-serif;}
+/* AI採点結果一覧 */
+.ai-review-sec h3{font-size:.88rem;font-weight:700;border-bottom:2px solid var(--orange);padding-bottom:5px;margin-bottom:12px;}
+.ai-rev-item{border:1px solid #dde4ee;border-radius:8px;margin-bottom:10px;overflow:hidden;}
+.ai-rev-hdr{display:flex;align-items:center;gap:8px;padding:9px 14px;font-size:.8rem;}
+.ai-rev-hdr.full{background:var(--ok-bg);}
+.ai-rev-hdr.half{background:var(--half-bg);}
+.ai-rev-hdr.zero{background:var(--ng-bg);}
+.ai-rev-stamp{font-size:.7rem;font-weight:700;padding:2px 9px;border-radius:10px;}
+.st-full{background:var(--ok-bg);color:var(--ok);}
+.st-half{background:var(--half-bg);color:var(--half);}
+.st-zero{background:var(--ng-bg);color:var(--ng);}
+.st-skip{background:#f3f3f3;color:#888;}
+.ai-rev-score{margin-left:auto;font-weight:700;font-size:.84rem;}
+.ai-rev-q{font-size:.8rem;padding:6px 14px;color:#334;line-height:1.6;}
+.ai-rev-feedback{font-size:.78rem;padding:4px 14px 10px;color:#445;line-height:1.6;}
+.ai-rev-ans{font-size:.76rem;padding:3px 14px 9px;color:var(--ok);font-weight:700;}
 
-/* レビュー */
-.rev-sec h3{font-size:.88rem;font-weight:700;border-bottom:2px solid var(--orange);padding-bottom:5px;margin-bottom:12px;}
+/* 選択問題解答一覧 */
+.sel-review-sec{margin-top:22px;}
+.sel-review-sec h3{font-size:.88rem;font-weight:700;border-bottom:2px solid var(--gray);padding-bottom:5px;margin-bottom:12px;}
 .rev-item{border:1px solid #dde4ee;border-radius:8px;margin-bottom:8px;overflow:hidden;}
 .rev-hdr{display:flex;align-items:center;gap:7px;padding:9px 13px;background:var(--light);font-size:.8rem;}
 .rev-stamp{font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:10px;}
-.st-ok{background:var(--ok-bg);color:var(--ok);}
-.st-ng{background:var(--ng-bg);color:var(--ng);}
+.st-ok{background:var(--ok-bg);color:var(--ok);}.st-ng{background:var(--ng-bg);color:var(--ng);}
 .rev-q{font-size:.8rem;padding:7px 13px;color:#334;line-height:1.6;}
 .rev-ans{font-size:.78rem;padding:4px 13px 9px;color:var(--ok);font-weight:700;}
 
 .btn-retry{background:var(--orange);color:#fff;border:none;padding:11px 28px;border-radius:8px;font-family:'Noto Sans JP',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer;margin-top:22px;display:block;width:100%;transition:background .2s;}
 .btn-retry:hover{background:var(--orange2);}
+
+/* 合計スコア表示 */
+.total-score-box{background:var(--navy);color:#fff;border-radius:12px;padding:20px;text-align:center;margin-bottom:20px;}
+.total-score-box .ts-label{font-size:.8rem;color:#aabbcc;margin-bottom:6px;}
+.total-score-box .ts-val{font-size:2.4rem;font-weight:900;color:var(--gold);}
+.total-score-box .ts-sub{font-size:.76rem;color:#aabbcc;margin-top:4px;}
 </style>
 </head>
 <body>
@@ -147,10 +221,7 @@ header .sub{font-size:.7rem;color:var(--gray);margin-top:3px;}
     <h1>電気理論 確認問題</h1>
     <div class="sub">電気物理 ／ 電磁気 ／ 静電気 ／ 電気回路 — 全 50 問</div>
   </div>
-  <div class="hdr-badge">
-    <strong id="hdrVal">—</strong>
-    <span id="hdrSub">テスト前</span>
-  </div>
+  <div class="hdr-badge"><strong id="hdrVal">—</strong><span id="hdrSub">テスト前</span></div>
 </header>
 <div class="prog-wrap">
   <div class="prog-outer"><div class="prog-inner" id="progBar"></div></div>
@@ -161,15 +232,20 @@ header .sub{font-size:.7rem;color:var(--gray);margin-top:3px;}
 <div id="startScreen" class="screen active">
   <div class="start-card">
     <h2>電気理論 確認問題</h2>
-    <p>電気物理・電磁気・静電気・電気回路の基礎知識を確認します。</p>
-    <p>問題は1問ずつ表示されます。<br>
-       <b>選択問題</b>は選んだら自動で次へ進みます。<br>
-       <b>記述式</b>は手元のペーパーに書いてから解答を確認してください。</p>
-    <div class="info-grid" style="grid-template-columns:repeat(4,1fr);">
+    <p>選択問題は選んだら自動で次へ進みます。<br>
+       公式記述・穴埋め問題は入力後、AIが自動採点します。</p>
+    <div class="info-grid">
       <div class="info-box"><strong>50</strong>問　合計</div>
       <div class="info-box"><strong id="infoSel">—</strong>問　選択式</div>
       <div class="info-box"><strong id="infoFormula">—</strong>問　公式記述</div>
       <div class="info-box"><strong id="infoFill">—</strong>問　穴埋め</div>
+    </div>
+    <div class="api-key-box">
+      <label>🔗 Cloudflare Worker URL（AI採点に必要）</label>
+      <input type="text" id="workerUrl"
+        placeholder="https://gemini-proxy.あなたのサブドメイン.workers.dev">
+      <div class="api-key-note">※ URLはブラウザ内にのみ保存。GitHubには含まれません。<br>
+      ※ 未入力のままでもテストを開始できます（記述式は0点として計上）。</div>
     </div>
     <button class="btn-start" onclick="startQuiz()">テストを開始する</button>
   </div>
@@ -187,10 +263,13 @@ header .sub{font-size:.7rem;color:var(--gray);margin-top:3px;}
       <p class="q-text" id="qText"></p>
       <div id="qContent"></div>
       <div class="judge" id="judge"></div>
-      <div class="ans-panel" id="ansPanel">
-        <div class="ans-label">✅ 解答</div>
-        <div id="ansLines"></div>
-        <div class="ans-note" id="ansNote"></div>
+      <div class="ai-scoring" id="aiScoring">
+        <div class="ai-scoring-spinner"></div>
+        <span>Gemini が採点中…</span>
+      </div>
+      <div class="ai-result-panel" id="aiResultPanel">
+        <div class="ai-result-header" id="aiResultHeader"></div>
+        <div class="ai-result-body" id="aiResultBody"></div>
       </div>
       <div class="q-nav">
         <div class="q-nav-top">
@@ -199,6 +278,7 @@ header .sub{font-size:.7rem;color:var(--gray);margin-top:3px;}
         </div>
         <div class="q-nav-btns">
           <button class="btn-back" id="btnBack" onclick="prevQ()">← 戻る</button>
+          <button class="btn-ai-score" id="btnAiScore" onclick="runAiScore()">✨ AI採点する</button>
           <button class="btn-next" id="btnNext" onclick="nextQ()">次の問題へ →</button>
         </div>
       </div>
@@ -206,11 +286,11 @@ header .sub{font-size:.7rem;color:var(--gray);margin-top:3px;}
   </div>
 </div>
 
-<!-- QUIT MODAL -->
+<!-- MODAL -->
 <div class="modal-overlay" id="quitModal">
   <div class="modal-box">
     <h3>テストをやめますか？</h3>
-    <p>途中でやめると現在の回答はリセットされます。<br>スタート画面に戻ります。</p>
+    <p>途中でやめると現在の回答はリセットされます。</p>
     <div class="modal-btns">
       <button class="modal-cancel" onclick="closeModal()">続ける</button>
       <button class="modal-ok" onclick="resetQuiz()">やめる</button>
@@ -221,56 +301,52 @@ header .sub{font-size:.7rem;color:var(--gray);margin-top:3px;}
 <!-- RESULT -->
 <div id="resultScreen" class="screen">
   <div class="res-card">
-    <div class="res-hdr">
-      <h2>📋 採点結果</h2>
-      <p>電気理論 確認問題 — 全 50 問</p>
-    </div>
+    <div class="res-hdr"><h2>📋 採点結果</h2><p>電気理論 確認問題 — 全 50 問</p></div>
     <div class="res-body">
-      <p id="unansweredNote" style="display:none;color:var(--ng);font-size:.82rem;margin-bottom:14px;padding:8px 12px;background:var(--ng-bg);border-radius:6px;"></p>
-      <div class="score-grid" style="grid-template-columns:1fr 1fr 1fr;">
+      <div class="total-score-box">
+        <div class="ts-label">総合スコア（選択 + AI採点記述式）</div>
+        <div class="ts-val"><span id="rTotalScore">—</span> <span style="font-size:1.2rem;font-weight:400;">点</span></div>
+        <div class="ts-sub">満点 <span id="rTotalMax">—</span> 点（選択 <span id="rSelMax">—</span> 点 ＋ 記述 <span id="rDescMax">—</span> 点）</div>
+      </div>
+      <div class="score-grid">
         <div class="score-box sel">
-          <div class="sl">🔘 選択問題 スコア</div>
-          <div class="sv"><span id="rSelOk">0</span><span style="font-size:1rem;font-weight:400"> / <span id="rSelTot">0</span></span></div>
-          <div class="ss">点</div>
+          <div class="sl">🔘 選択問題</div>
+          <div class="sv"><span id="rSelScore">0</span><span style="font-size:.9rem;font-weight:400;"> / <span id="rSelMax2">—</span></span></div>
+          <div class="ss">点（1問1点）</div>
         </div>
-        <div class="score-box desc">
-          <div class="sl">✏️ 公式記述 自己採点</div>
-          <div class="sv"><span id="rFormulaOk">—</span><span style="font-size:1rem;font-weight:400"> / <span id="rFormulaTot">0</span></span></div>
-          <div class="ss">問（自己採点）</div>
+        <div class="score-box formula">
+          <div class="sl">✏️ 公式記述</div>
+          <div class="sv"><span id="rFormulaScore">—</span><span style="font-size:.9rem;font-weight:400;"> / <span id="rFormulaTot">—</span></span></div>
+          <div class="ss">点（1問1点・部分点0.5）</div>
         </div>
-        <div class="score-box desc" style="background:#f0f9ff;border-color:#7dd3fc;">
-          <div class="sl">📝 穴埋め 自己採点</div>
-          <div class="sv" style="color:#0369a1;"><span id="rFillOk">—</span><span style="font-size:1rem;font-weight:400"> / <span id="rFillTot">0</span></span></div>
-          <div class="ss">問（自己採点）</div>
-        </div>
-      </div>
-
-      <div class="self-box">
-        <h3>✏️ 記述式の自己採点（解答ペーパーで確認後に入力）</h3>
-        <div class="self-row" style="margin-bottom:10px;">
-          <span>公式記述 <b id="selfFormulaTot">—</b> 問中</span>
-          <input type="number" id="selfFormulaInput" min="0" placeholder="0"
-            oninput="updateSelfFormula(this.value)">
-          <span>問 正解</span>
-        </div>
-        <div class="self-row">
-          <span>穴埋め　 <b id="selfFillTot">—</b> 問中</span>
-          <input type="number" id="selfFillInput" min="0" placeholder="0"
-            oninput="updateSelfFill(this.value)">
-          <span>問 正解</span>
+        <div class="score-box fill">
+          <div class="sl">📝 穴埋め</div>
+          <div class="sv"><span id="rFillScore">—</span><span style="font-size:.9rem;font-weight:400;"> / <span id="rFillTot">—</span></span></div>
+          <div class="ss">点（1問1点・部分点0.5）</div>
         </div>
       </div>
 
-      <div class="rev-sec">
-        <h3>選択問題 解答一覧</h3>
-        <div id="revList"></div>
+      <!-- AI採点結果一覧（記述式） -->
+      <div class="ai-review-sec">
+        <h3>✨ AI採点 解答一覧（記述式）</h3>
+        <div id="aiRevList"></div>
       </div>
+
+      <!-- 選択問題解答一覧 -->
+      <div class="sel-review-sec">
+        <h3>🔘 選択問題 解答一覧</h3>
+        <div id="selRevList"></div>
+      </div>
+
       <button class="btn-retry" onclick="resetQuiz()">🔄 もう一度チャレンジする</button>
     </div>
   </div>
 </div>
 
 <script>
+// ================================================================
+// 問題データ
+// ================================================================
 const questions = [
   // ── 電気物理 ──
   {id:1,sec:'電気物理',type:'formula',
@@ -485,50 +561,69 @@ const questions = [
    text:'静電容量回路（Cのみ）では、電流iは加えた電圧vより位相が（　①　）だけ（　②　）む。容量リアクタンス Xc = （　③　）で表される。交流回路の有効電力 P = （　④　）で表される。',
    ans:['① π/2 [rad]（90°）　② 進　③ 1/(ωC) = 1/(2πfC) [Ω]　④ VIcosφ [W]（cosφは力率）'],
    note:'皮相電力S = VI [V·A]、無効電力Q = VIsinφ [var]'},
-];
+]
 
-// ── 集計 ──
-const selQs  = questions.filter(q => q.type === 'unit');
-const descQs = questions.filter(q => q.type !== 'unit');
+// ================================================================
+// 集計
+// ================================================================
+// localStorageからWorker URLを復元
+window.addEventListener('DOMContentLoaded', ()=>{
+  const saved = localStorage.getItem('workerUrl');
+  if(saved) document.getElementById('workerUrl').value = saved;
+});
+
+const selQs     = questions.filter(q => q.type === 'unit');
 const formulaQs = questions.filter(q => q.type === 'formula');
 const fillQs    = questions.filter(q => q.type === 'fill');
 document.getElementById('infoSel').textContent     = selQs.length;
 document.getElementById('infoFormula').textContent = formulaQs.length;
 document.getElementById('infoFill').textContent    = fillQs.length;
 
-// ── 状態 ──
-// answers: { [id]: selectedIndex }  選択中の回答（未採点・変更可）
-// results: 採点後の結果配列（採点ボタン押下後に確定）
-let qi = 0, answers = {}, results = [];
+// ================================================================
+// 状態管理
+// ================================================================
+let qi = 0;
+let answers     = {};  // {id: value}  選択:index, 公式:string, 穴埋め:[str,str,...]
+let aiResults   = {};  // {id: {score:0|0.5|1, feedback:'', scoredAnswer:''}}
+let selResults  = [];  // 採点後の選択問題結果
+let workerUrl   = '';
 
-// ── 画面切り替え ──
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+// ================================================================
+// 画面切り替え
+// ================================================================
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-// ── スタート ──
-function startQuiz() {
-  qi = 0; answers = {}; results = [];
+// ================================================================
+// スタート
+// ================================================================
+function startQuiz(){
+  // Worker URLをlocalStorageに保存（次回入力省略）
+  const inputUrl = document.getElementById('workerUrl').value.trim();
+  if(inputUrl) localStorage.setItem('workerUrl', inputUrl);
+  workerUrl = inputUrl || localStorage.getItem('workerUrl') || '';
+  qi=0; answers={}; aiResults={}; selResults=[];
   showScreen('quizScreen');
   renderQ();
   updateProg();
 }
 
-function resetQuiz() {
-  qi = 0; answers = {}; results = [];
-  document.getElementById('selfFormulaInput').value = '';
-  document.getElementById('selfFillInput').value = '';
+function resetQuiz(){
+  qi=0; answers={}; aiResults={}; selResults=[];
   document.getElementById('quitModal').classList.remove('show');
-  document.getElementById('hdrVal').textContent = '—';
-  document.getElementById('hdrSub').textContent = 'テスト前';
-  document.getElementById('progBar').style.width = '0%';
-  document.getElementById('progLabel').textContent = '準備中';
+  document.getElementById('hdrVal').textContent='—';
+  document.getElementById('hdrSub').textContent='テスト前';
+  document.getElementById('progBar').style.width='0%';
+  document.getElementById('progLabel').textContent='準備中';
   showScreen('startScreen');
 }
 
-// ── 問題描画 ──
-function renderQ() {
+// ================================================================
+// 問題描画
+// ================================================================
+function renderQ(){
   const q = questions[qi];
   const typeLabel = q.type==='formula'?'公式記述':q.type==='unit'?'単位選択':'穴埋め';
   const pillCls   = q.type==='formula'?'pill-formula':q.type==='unit'?'pill-unit':'pill-fill';
@@ -539,188 +634,434 @@ function renderQ() {
   document.getElementById('qSec').textContent  = q.sec;
   document.getElementById('qText').textContent = q.text;
 
-  // 解答パネル・判定バナーリセット
-  document.getElementById('ansPanel').classList.remove('show');
-  document.getElementById('ansLines').innerHTML =
-    q.ans.map(a=>`<div class="ans-line">${a}</div>`).join('');
-  document.getElementById('ansNote').textContent = q.note||'';
-  document.getElementById('judge').className = 'judge';
-  document.getElementById('judge').innerHTML = '';
+  // リセット
+  document.getElementById('judge').className       = 'judge';
+  document.getElementById('judge').innerHTML        = '';
+  document.getElementById('aiScoring').classList.remove('show');
+  document.getElementById('aiResultPanel').classList.remove('show');
 
-  // ナビボタン
-  const btnNext = document.getElementById('btnNext');
-  const btnBack = document.getElementById('btnBack');
-  const isLast  = qi === questions.length - 1;
-  btnNext.textContent = isLast ? '採点する ✓' : '次の問題へ →';
-  btnBack.disabled = (qi === 0);
+  const btnNext    = document.getElementById('btnNext');
+  const btnBack    = document.getElementById('btnBack');
+  const btnAiScore = document.getElementById('btnAiScore');
+  const isLast     = qi === questions.length - 1;
+  btnNext.textContent  = isLast ? '採点する ✓' : '次の問題へ →';
+  btnBack.disabled     = (qi === 0);
+  btnNext.disabled     = false;
+  btnAiScore.style.display = 'none';
 
-  // コンテンツ描画
   const ct = document.getElementById('qContent');
   ct.innerHTML = '';
 
-  if (q.type === 'unit') {
-    const saved = answers[q.id];  // 保存済み選択（インデックス or undefined）
-    const grid = document.createElement('div');
+  if(q.type === 'unit'){
+    // ── 選択問題 ──
+    const saved = answers[q.id];
+    const grid  = document.createElement('div');
     grid.className = 'opts';
-    q.opts.forEach((o, i) => {
+    q.opts.forEach((o,i)=>{
       const b = document.createElement('button');
       b.className = 'opt';
       b.textContent = o;
-      // 保存済みなら選択状態を復元
-      if (saved !== undefined && saved === i) b.classList.add('selected');
-      b.onclick = () => chooseOpt(q, i, grid);
+      if(saved !== undefined && saved === i) b.classList.add('selected');
+      b.onclick = ()=> chooseOpt(q, i, grid);
       grid.appendChild(b);
     });
     ct.appendChild(grid);
-  } else {
-    ct.innerHTML = `<div class="write-box">✏️　手元のペーパーに記述してください</div>`;
-  }
+    if(saved === undefined) btnNext.disabled = false; // 未回答でも次へOK
 
-  // 進捗表示（選択問題の回答済み数）
-  const selAnswered = selQs.filter(q => answers[q.id] !== undefined).length;
-  document.getElementById('hdrVal').textContent = selAnswered;
-  document.getElementById('hdrSub').textContent = `/ ${selQs.length} 選択済み`;
+  } else if(q.type === 'formula'){
+    // ── 公式記述 ──
+    const saved = answers[q.id] || '';
+    const wrap  = document.createElement('div');
+    wrap.className = 'formula-input-wrap';
+    wrap.innerHTML = `
+      <span class="formula-input-label">✏️ 公式を記述してください</span>
+      <textarea class="formula-textarea" id="formulaInput" placeholder="例：V = RI  [V]">${saved}</textarea>
+      <div class="formula-hint">
+        ※ 数式は通常のテキストで入力してください。例：<code>I = Q/t [A]</code>、<code>F = BIl [N]</code>
+      </div>`;
+    ct.appendChild(wrap);
+
+    // 既にAI採点済みなら結果を復元
+    const ar = aiResults[q.id];
+    if(ar){
+      showAiResultUI(ar);
+    } else {
+      btnAiScore.style.display = 'inline-block';
+      btnAiScore.disabled = false;
+      btnAiScore.textContent = '✨ AI採点する';
+    }
+
+    // 入力変化でAI採点ボタンを再表示
+    setTimeout(()=>{
+      const ta = document.getElementById('formulaInput');
+      if(ta){
+        ta.addEventListener('input', ()=>{
+          answers[q.id] = ta.value;
+          if(!aiResults[q.id]){
+            btnAiScore.style.display = 'inline-block';
+          }
+        });
+      }
+    }, 50);
+
+  } else {
+    // ── 穴埋め ──
+    const blanks = extractBlanks(q.text);
+    const saved  = answers[q.id] || Array(blanks.length).fill('');
+    const wrap   = document.createElement('div');
+    wrap.className = 'fill-wrap';
+    blanks.forEach((label, i)=>{
+      const item = document.createElement('div');
+      item.className = 'fill-item';
+      item.innerHTML = `
+        <div class="fill-num">${label}</div>
+        <input type="text" class="fill-input" id="fillInput_${i}"
+          placeholder="${label} を入力…" value="${saved[i]||''}">`;
+      wrap.appendChild(item);
+    });
+    ct.appendChild(wrap);
+
+    // 既にAI採点済みなら結果を復元
+    const ar = aiResults[q.id];
+    if(ar){
+      showAiResultUI(ar);
+    } else {
+      btnAiScore.style.display = 'inline-block';
+      btnAiScore.disabled = false;
+      btnAiScore.textContent = '✨ AI採点する';
+    }
+
+    // 入力変化を保存
+    setTimeout(()=>{
+      blanks.forEach((_,i)=>{
+        const inp = document.getElementById(`fillInput_${i}`);
+        if(inp) inp.addEventListener('input', ()=> saveFillAnswers(q, blanks.length));
+      });
+    }, 50);
+  }
 
   // カード再アニメ
   const card = document.getElementById('qCard');
-  card.style.animation = 'none'; card.offsetHeight; card.style.animation = '';
-
+  card.style.animation='none'; card.offsetHeight; card.style.animation='';
   document.getElementById('navCount').textContent = `${qi+1} / ${questions.length} 問`;
   updateProg();
 }
 
-// ── 選択肢を選ぶ（即採点せず保存のみ） ──
-function chooseOpt(q, idx, grid) {
-  // 回答を上書き保存（何度でも変更可）
-  answers[q.id] = idx;
-
-  // ボタンのvisualを更新
-  grid.querySelectorAll('.opt').forEach((b, i) => {
-    b.classList.toggle('selected', i === idx);
+// 穴埋め空欄を抽出
+function extractBlanks(text){
+  const found = [];
+  const map   = {'①':'①','②':'②','③':'③','④':'④'};
+  ['①','②','③','④'].forEach(s=>{
+    if(text.includes(`（　${s}　）`)) found.push(s);
   });
+  return found;
+}
 
+// 穴埋め回答を保存
+function saveFillAnswers(q, count){
+  const vals = [];
+  for(let i=0;i<count;i++){
+    const inp = document.getElementById(`fillInput_${i}`);
+    vals.push(inp ? inp.value : '');
+  }
+  answers[q.id] = vals;
+}
+
+// ================================================================
+// 選択問題：回答
+// ================================================================
+function chooseOpt(q, idx, grid){
+  answers[q.id] = idx;
+  grid.querySelectorAll('.opt').forEach((b,i)=>{
+    b.classList.toggle('selected', i===idx);
+  });
   updateProg();
 }
 
-// ── 次へ ──
-function nextQ() {
-  qi++;
-  if (qi >= questions.length) {
-    scoreAndShowResult();
+// ================================================================
+// AI採点
+// ================================================================
+async function runAiScore(){
+  const q   = questions[qi];
+  const url = workerUrl;
+
+  // 回答を収集
+  let userAnswer = '';
+  if(q.type === 'formula'){
+    const ta = document.getElementById('formulaInput');
+    if(ta) answers[q.id] = ta.value;
+    userAnswer = answers[q.id] || '';
   } else {
-    renderQ();
-    window.scrollTo({top:0, behavior:'smooth'});
+    const blanks = extractBlanks(q.text);
+    saveFillAnswers(q, blanks.length);
+    const vals = answers[q.id] || [];
+    userAnswer = blanks.map((b,i)=> `${b}：${vals[i]||'（未回答）'}`).join('　');
+  }
+
+  if(!userAnswer.trim()){
+    alert('回答を入力してからAI採点してください。');
+    return;
+  }
+
+  // UI
+  document.getElementById('aiScoring').classList.add('show');
+  document.getElementById('aiResultPanel').classList.remove('show');
+  document.getElementById('btnAiScore').disabled = true;
+  document.getElementById('btnNext').disabled    = true;
+
+  // Gemini prompt
+  const modelAns = q.ans.join(' / ');
+  const noteText = q.note ? `【補足】${q.note}` : '';
+  const typeLabel = q.type === 'formula' ? '公式記述問題' : '穴埋め問題';
+
+  const prompt = `あなたは電気工学の採点者です。以下の${typeLabel}の回答を採点してください。
+
+【問題】${q.text}
+
+【模範解答】${modelAns}
+${noteText}
+
+【生徒の回答】${userAnswer}
+
+採点基準：
+- 1点（満点）：模範解答と同じ、または数学的・電気工学的に等価な別表現で正解
+- 0.5点（部分点）：一部が正しい、方向性は合っているが不完全、単位が抜けているなど
+- 0点：明らかに誤り、または未回答・無関係な内容
+
+必ず以下のJSON形式のみで回答してください（他のテキスト不可）：
+{"score": 0 or 0.5 or 1, "feedback": "採点理由を日本語で2〜3文で説明"}`;
+
+  try {
+    // Worker URLチェック
+    if(!url){
+      document.getElementById('aiScoring').classList.remove('show');
+      const panel = document.getElementById('aiResultPanel');
+      panel.classList.add('show');
+      document.getElementById('aiResultHeader').className = 'ai-result-header zero';
+      document.getElementById('aiResultHeader').innerHTML = '⚠️ Worker URL 未設定';
+      document.getElementById('aiResultBody').innerHTML =
+        'スタート画面でCloudflare Worker URLを入力してください。<br>' +
+        '<small>未設定のまま次へ進むと0点として計上されます。</small>';
+      document.getElementById('btnAiScore').disabled = false;
+      document.getElementById('btnNext').disabled    = false;
+      return;
+    }
+
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        contents: [{parts:[{text: prompt}]}],
+        generationConfig: {temperature: 0.1, maxOutputTokens: 300}
+      })
+    });
+
+    if(!resp.ok){
+      const err = await resp.json();
+      throw new Error(err.error?.message || `HTTP ${resp.status}`);
+    }
+
+    const data = await resp.json();
+    const raw  = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+    // JSON抽出
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if(!jsonMatch) throw new Error('JSONが見つかりません: ' + raw);
+    const parsed = JSON.parse(jsonMatch[0]);
+
+    const result = {
+      score:        parsed.score,
+      feedback:     parsed.feedback,
+      scoredAnswer: userAnswer,
+      modelAns:     modelAns
+    };
+    aiResults[q.id] = result;
+
+    document.getElementById('aiScoring').classList.remove('show');
+    showAiResultUI(result);
+    document.getElementById('btnAiScore').style.display  = 'none';
+    document.getElementById('btnNext').disabled = false;
+
+  } catch(e){
+    document.getElementById('aiScoring').classList.remove('show');
+    const panel = document.getElementById('aiResultPanel');
+    panel.classList.add('show');
+    document.getElementById('aiResultHeader').className = 'ai-result-header zero';
+    document.getElementById('aiResultHeader').innerHTML = `❌ API エラー`;
+    document.getElementById('aiResultBody').innerHTML   = `<span style="color:var(--ng);">${e.message}</span><br><small>APIキーを確認してください。キーなしでも次へ進めます。</small>`;
+    document.getElementById('btnAiScore').disabled  = false;
+    document.getElementById('btnNext').disabled     = false;
   }
 }
 
-// ── 戻る ──
-function prevQ() {
-  if (qi <= 0) return;
+function showAiResultUI(ar){
+  const score = ar.score;
+  const cls   = score===1?'full':score===0.5?'half':'zero';
+  const label = score===1?'⭕ 満点（1点）':score===0.5?'△ 部分点（0.5点）':'❌ 不正解（0点）';
+  const panel  = document.getElementById('aiResultPanel');
+  const header = document.getElementById('aiResultHeader');
+  const body   = document.getElementById('aiResultBody');
+  panel.classList.add('show');
+  header.className = `ai-result-header ${cls}`;
+  header.innerHTML = `<span>${label}</span><span class="ai-result-score">${score} pt</span>`;
+  body.innerHTML   = `
+    <div>${ar.feedback}</div>
+    <div class="model-ans">
+      <div class="model-ans-label">📖 模範解答</div>
+      <div>${ar.modelAns}</div>
+    </div>`;
+  document.getElementById('btnNext').disabled = false;
+}
+
+// ================================================================
+// ナビ
+// ================================================================
+function nextQ(){
+  const q = questions[qi];
+  // 記述式で未採点の場合、入力値だけ保存して進む
+  if(q.type === 'formula'){
+    const ta = document.getElementById('formulaInput');
+    if(ta) answers[q.id] = ta.value;
+  } else if(q.type === 'fill'){
+    const blanks = extractBlanks(q.text);
+    saveFillAnswers(q, blanks.length);
+  }
+
+  qi++;
+  if(qi >= questions.length) scoreAndShow();
+  else{ renderQ(); window.scrollTo({top:0,behavior:'smooth'}); }
+}
+
+function prevQ(){
+  if(qi<=0) return;
+  // 現在の入力を保存
+  const q = questions[qi];
+  if(q.type==='formula'){
+    const ta = document.getElementById('formulaInput');
+    if(ta) answers[q.id] = ta.value;
+  } else if(q.type==='fill'){
+    const blanks = extractBlanks(q.text);
+    saveFillAnswers(q, blanks.length);
+  }
   qi--;
   renderQ();
-  window.scrollTo({top:0, behavior:'smooth'});
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ── やめる確認 ──
-function confirmQuit() { document.getElementById('quitModal').classList.add('show'); }
-function closeModal()   { document.getElementById('quitModal').classList.remove('show'); }
+function confirmQuit(){ document.getElementById('quitModal').classList.add('show'); }
+function closeModal()  { document.getElementById('quitModal').classList.remove('show'); }
 
-// ── 進捗バー ──
-function updateProg() {
-  // 選択問題の回答済み数 ＋ 記述式の通過数でカウント
-  const selDone  = selQs.filter(q => answers[q.id] !== undefined).length;
-  const descDone = Math.min(qi, descQs.length);  // 通過した問題数で概算
-  const total    = questions.length;
-  const pct      = Math.round((qi / total) * 100);
-  document.getElementById('progBar').style.width  = pct + '%';
+// ================================================================
+// 進捗
+// ================================================================
+function updateProg(){
+  const pct = Math.round(qi / questions.length * 100);
+  document.getElementById('progBar').style.width = pct+'%';
+  const selDone = selQs.filter(q=>answers[q.id]!==undefined).length;
   document.getElementById('progLabel').textContent =
-    `${qi} / ${total} 問 通過　選択回答済 ${selDone} / ${selQs.length}`;
+    `${qi} / ${questions.length} 問 通過　選択済 ${selDone}/${selQs.length}`;
+  document.getElementById('hdrVal').textContent = qi;
+  document.getElementById('hdrSub').textContent  = '問 通過';
 }
 
-// ── 採点して結果画面へ ──
-function scoreAndShowResult() {
-  results = [];
-
-  // 選択問題を採点
-  selQs.forEach(q => {
-    const selIdx = answers[q.id];
-    const ok     = selIdx !== undefined && selIdx === q.cor;
-    results.push({
-      id: q.id, sec: q.sec, type: 'unit', text: q.text,
-      ans: q.ans[0],
-      selected: selIdx !== undefined ? q.opts[selIdx] : '未回答',
-      ok: ok,
-      unanswered: selIdx === undefined
-    });
+// ================================================================
+// 採点 → 結果画面
+// ================================================================
+function scoreAndShow(){
+  // 選択問題採点
+  selResults = selQs.map(q=>{
+    const idx = answers[q.id];
+    const ok  = idx !== undefined && idx === q.cor;
+    return {id:q.id, sec:q.sec, text:q.text, ans:q.ans[0],
+            selected: idx!==undefined ? q.opts[idx]:'未回答',
+            ok, unanswered: idx===undefined};
   });
+  const selScore = selResults.filter(r=>r.ok).length;
 
-  showResult();
-}
+  // 記述式スコア集計
+  const formulaScore = formulaQs.reduce((sum,q)=> sum + (aiResults[q.id]?.score||0), 0);
+  const fillScore    = fillQs.reduce((sum,q)=> sum + (aiResults[q.id]?.score||0), 0);
+  const totalScore   = selScore + formulaScore + fillScore;
+  const totalMax     = selQs.length + formulaQs.length + fillQs.length;
 
-// ── 結果画面 ──
-function showResult() {
-  showScreen('resultScreen');
-
-  const selOk       = results.filter(r => r.ok).length;
-  const unanswered  = results.filter(r => r.unanswered).length;
-
-  document.getElementById('rSelOk').textContent      = selOk;
-  document.getElementById('rSelTot').textContent     = selQs.length;
-  document.getElementById('rFormulaTot').textContent = formulaQs.length;
-  document.getElementById('rFillTot').textContent    = fillQs.length;
-  document.getElementById('rFormulaOk').textContent  = '—';
-  document.getElementById('rFillOk').textContent     = '—';
-  document.getElementById('selfFormulaTot').textContent = formulaQs.length;
-  document.getElementById('selfFillTot').textContent    = fillQs.length;
-  document.getElementById('selfFormulaInput').max = formulaQs.length;
-  document.getElementById('selfFillInput').max    = fillQs.length;
-
-  document.getElementById('hdrVal').textContent = `${selOk}/${selQs.length}`;
-  document.getElementById('hdrSub').textContent = '選択問題';
+  // ヘッダ更新
+  document.getElementById('hdrVal').textContent = totalScore.toFixed(1);
+  document.getElementById('hdrSub').textContent = '点';
   document.getElementById('progBar').style.width = '100%';
   document.getElementById('progLabel').textContent = '全問完了';
 
-  // 未回答の注記
-  const noteEl = document.getElementById('unansweredNote');
-  if (unanswered > 0) {
-    noteEl.textContent = `※ 未回答の選択問題が ${unanswered} 問あります。`;
-    noteEl.style.display = 'block';
-  } else {
-    noteEl.style.display = 'none';
-  }
+  // 合計
+  document.getElementById('rTotalScore').textContent = totalScore % 1 === 0
+    ? totalScore : totalScore.toFixed(1);
+  document.getElementById('rTotalMax').textContent  = totalMax;
+  document.getElementById('rSelMax').textContent    = selQs.length;
+  document.getElementById('rDescMax').textContent   = formulaQs.length + fillQs.length;
 
-  // 解答一覧（選択問題）
-  const list = document.getElementById('revList');
-  list.innerHTML = '';
-  results.forEach(r => {
+  // 各セクション
+  document.getElementById('rSelScore').textContent    = selScore;
+  document.getElementById('rSelMax2').textContent     = selQs.length;
+  document.getElementById('rFormulaScore').textContent= formulaScore%1===0?formulaScore:formulaScore.toFixed(1);
+  document.getElementById('rFormulaTot').textContent  = formulaQs.length;
+  document.getElementById('rFillScore').textContent   = fillScore%1===0?fillScore:fillScore.toFixed(1);
+  document.getElementById('rFillTot').textContent     = fillQs.length;
+
+  // AI採点一覧（記述式）
+  const aiRevList = document.getElementById('aiRevList');
+  aiRevList.innerHTML = '';
+  [...formulaQs, ...fillQs].sort((a,b)=>a.id-b.id).forEach(q=>{
+    const ar  = aiResults[q.id];
+    const div = document.createElement('div');
+    div.className = 'ai-rev-item';
+    if(ar){
+      const cls   = ar.score===1?'full':ar.score===0.5?'half':'zero';
+      const stamp = ar.score===1?'⭕ 満点':'△ 部分点';
+      const sc    = ar.score===0?'❌ 0点':ar.score===0.5?'0.5点':'1点';
+      div.innerHTML = `
+        <div class="ai-rev-hdr ${cls}">
+          <span class="ai-rev-stamp ${ar.score===1?'st-full':ar.score===0.5?'st-half':'st-zero'}">
+            ${ar.score===0?'❌ 不正解':stamp}</span>
+          <span style="color:var(--gray);font-size:.73rem;">
+            Q${String(q.id).padStart(2,'0')} ${q.sec}（${q.type==='formula'?'公式':'穴埋め'}）</span>
+          <span class="ai-rev-score">${sc}</span>
+        </div>
+        <div class="ai-rev-q">${q.text}</div>
+        <div class="ai-rev-feedback">💬 ${ar.feedback}</div>
+        <div class="ai-rev-ans">📖 模範解答：${ar.modelAns}</div>`;
+    } else {
+      div.innerHTML = `
+        <div class="ai-rev-hdr zero" style="background:#f9f9f9;">
+          <span class="ai-rev-stamp st-skip">— 未採点</span>
+          <span style="color:var(--gray);font-size:.73rem;">
+            Q${String(q.id).padStart(2,'0')} ${q.sec}</span>
+          <span class="ai-rev-score" style="color:#888;">0点</span>
+        </div>
+        <div class="ai-rev-q">${q.text}</div>
+        <div class="ai-rev-ans" style="color:#888;">📖 模範解答：${q.ans.join(' / ')}</div>`;
+    }
+    aiRevList.appendChild(div);
+  });
+
+  // 選択問題一覧
+  const selRevList = document.getElementById('selRevList');
+  selRevList.innerHTML = '';
+  selResults.forEach(r=>{
     const div = document.createElement('div');
     div.className = 'rev-item';
-    const stampClass = r.unanswered ? 'st-skip' : (r.ok ? 'st-ok' : 'st-ng');
-    const stampLabel = r.unanswered ? '— 未回答' : (r.ok ? '⭕ 正解' : '❌ 不正解');
+    const sc = r.unanswered?'st-skip':r.ok?'st-ok':'st-ng';
+    const sl = r.unanswered?'— 未回答':r.ok?'⭕ 正解':'❌ 不正解';
     div.innerHTML = `
       <div class="rev-hdr">
-        <span class="rev-stamp ${stampClass}">${stampLabel}</span>
+        <span class="rev-stamp ${sc}">${sl}</span>
         <span style="color:var(--gray);font-size:.73rem;">Q${String(r.id).padStart(2,'0')} ${r.sec}</span>
-        ${!r.ok && !r.unanswered
-          ? `<span style="margin-left:auto;font-size:.73rem;color:#888;">あなたの回答：${r.selected}</span>`
-          : ''}
+        ${!r.ok&&!r.unanswered?`<span style="margin-left:auto;font-size:.73rem;color:#888;">回答：${r.selected}</span>`:''}
       </div>
       <div class="rev-q">${r.text}</div>
       <div class="rev-ans">正解：${r.ans}</div>`;
-    list.appendChild(div);
+    selRevList.appendChild(div);
   });
 
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-
-// ── 自己採点 ──
-function updateSelfFormula(v) {
-  const n = Math.min(Math.max(parseInt(v)||0, 0), formulaQs.length);
-  document.getElementById('rFormulaOk').textContent = n;
-}
-function updateSelfFill(v) {
-  const n = Math.min(Math.max(parseInt(v)||0, 0), fillQs.length);
-  document.getElementById('rFillOk').textContent = n;
+  showScreen('resultScreen');
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 </script>
 </body>
