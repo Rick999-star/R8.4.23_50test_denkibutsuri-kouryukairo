@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.js"></script>
 <title>電気理論 確認問題 50問</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@400;700&display=swap');
@@ -40,10 +42,6 @@ header .sub{font-size:.7rem;color:var(--gray);margin-top:3px;}
 .info-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:22px 0;}
 .info-box{background:var(--light);border-radius:8px;padding:13px 6px;font-size:.75rem;color:var(--navy2);}
 .info-box strong{display:block;font-size:1.2rem;color:var(--orange);margin-bottom:2px;}
-.api-key-box{background:var(--light);border-radius:10px;padding:16px 18px;margin:16px 0;text-align:left;}
-.api-key-box label{font-size:.8rem;font-weight:700;display:block;margin-bottom:6px;color:var(--navy2);}
-.api-key-box input{width:100%;padding:8px 12px;border:1.5px solid #c8d8ee;border-radius:6px;font-size:.88rem;font-family:'Noto Sans JP',sans-serif;}
-.api-key-note{font-size:.72rem;color:var(--gray);margin-top:4px;}
 .btn-start{background:var(--orange);color:#fff;border:none;padding:13px 44px;border-radius:8px;font-size:.97rem;font-family:'Noto Sans JP',sans-serif;font-weight:700;cursor:pointer;transition:background .2s;margin-top:6px;}
 .btn-start:hover{background:var(--orange2);}
 
@@ -212,6 +210,44 @@ header .sub{font-size:.7rem;color:var(--gray);margin-top:3px;}
 .total-score-box .ts-label{font-size:.8rem;color:#aabbcc;margin-bottom:6px;}
 .total-score-box .ts-val{font-size:2.4rem;font-weight:900;color:var(--gold);}
 .total-score-box .ts-sub{font-size:.76rem;color:#aabbcc;margin-top:4px;}
+
+/* ── 数式エディタ ── */
+.fe-how-to{background:var(--light);border:1px solid #c8d8ee;border-radius:8px;padding:.6rem .9rem;margin-bottom:.75rem;font-size:12px;color:#445;line-height:1.7;}
+.fe-how-to b{color:var(--navy);}
+.fe-editor-card{background:#fff;border:1px solid #c8d8ee;border-radius:8px;padding:.75rem 1rem;margin-bottom:.75rem;}
+.fe-eq-row{display:flex;align-items:center;gap:8px;min-height:56px;}
+.fe-side-wrap{flex:1;display:flex;flex-direction:column;gap:3px;}
+.fe-side-lbl{font-size:11px;color:var(--gray);}
+.fe-side-area{min-height:48px;padding:6px 8px;background:var(--light);border:1.5px solid #c8d8ee;border-radius:6px;cursor:text;display:flex;align-items:center;flex-wrap:wrap;gap:3px;transition:border-color .15s;}
+.fe-side-area.active{border-color:var(--orange);}
+.fe-eq-sign{font-size:22px;color:var(--navy2);flex-shrink:0;}
+.fe-preview-box{min-height:48px;display:flex;align-items:center;justify-content:center;padding:6px 10px;background:var(--light);border:1px solid #c8d8ee;border-radius:6px;margin-bottom:.75rem;overflow-x:auto;}
+.fe-tok{display:inline-flex;align-items:center;justify-content:center;padding:2px 5px;border-radius:4px;cursor:pointer;font-size:15px;color:var(--navy);background:#fff;border:0.5px solid #c8d8ee;gap:2px;}
+.fe-tok:hover{background:var(--light);}
+.fe-del-x{font-size:9px;color:var(--ng);font-weight:600;}
+.fe-edit-p{font-size:9px;color:var(--orange);}
+.fe-pal-section{margin-bottom:.75rem;}
+.fe-pal-lbl{font-size:11px;color:var(--gray);margin-bottom:4px;}
+.fe-pal-row{display:flex;flex-wrap:wrap;gap:5px;}
+.fe-pb{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 7px;min-width:44px;background:#fff;border:1px solid #c8d8ee;border-radius:6px;cursor:pointer;gap:2px;transition:background .12s;}
+.fe-pb:hover{background:var(--light);}
+.fe-pm{font-size:15px;line-height:1.2;color:var(--navy);}
+.fe-ps{font-size:9px;color:var(--gray);}
+.fe-action-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.75rem;}
+.fe-btn{padding:5px 12px;border-radius:6px;border:1px solid #c8d8ee;background:#fff;color:var(--navy);font-size:13px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;}
+.fe-btn:hover{background:var(--light);}
+.fe-btn-primary{background:var(--orange);color:#fff;border-color:var(--orange);}
+.fe-btn-danger{border-color:var(--ng);color:var(--ng);}
+.fe-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:9999;}
+.fe-modal-card{background:#fff;border:1px solid #c8d8ee;border-radius:10px;padding:1.25rem;width:300px;max-width:90vw;}
+.fe-modal-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:.5rem;}
+.fe-modal-hint{font-size:11px;color:#556;margin-bottom:.5rem;line-height:1.5;}
+.fe-modal-lbl{font-size:11px;color:var(--gray);margin-bottom:3px;}
+.fe-modal-input{width:100%;padding:6px 9px;border:1.5px solid #c8d8ee;border-radius:6px;background:#fff;color:var(--navy);font-size:15px;outline:none;margin-bottom:.5rem;}
+.fe-modal-input:focus{border-color:var(--orange);}
+.fe-modal-greek{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:.75rem;}
+.fe-modal-greek button{padding:3px 7px;border-radius:4px;border:1px solid #c8d8ee;background:var(--light);color:var(--navy);font-size:14px;cursor:pointer;}
+.fe-modal-btns{display:flex;gap:8px;justify-content:flex-end;}
 </style>
 </head>
 <body>
@@ -239,13 +275,6 @@ header .sub{font-size:.7rem;color:var(--gray);margin-top:3px;}
       <div class="info-box"><strong id="infoSel">—</strong>問　選択式</div>
       <div class="info-box"><strong id="infoFormula">—</strong>問　公式記述</div>
       <div class="info-box"><strong id="infoFill">—</strong>問　穴埋め</div>
-    </div>
-    <div class="api-key-box">
-      <label>🔗 Cloudflare Worker URL（AI採点に必要）</label>
-      <input type="text" id="workerUrl"
-        placeholder="https://gemini-proxy.あなたのサブドメイン.workers.dev">
-      <div class="api-key-note">※ URLはブラウザ内にのみ保存。GitHubには含まれません。<br>
-      ※ 未入力のままでもテストを開始できます（記述式は0点として計上）。</div>
     </div>
     <button class="btn-start" onclick="startQuiz()">テストを開始する</button>
   </div>
@@ -566,11 +595,6 @@ const questions = [
 // ================================================================
 // 集計
 // ================================================================
-// localStorageからWorker URLを復元
-window.addEventListener('DOMContentLoaded', ()=>{
-  const saved = localStorage.getItem('workerUrl');
-  if(saved) document.getElementById('workerUrl').value = saved;
-});
 
 const selQs     = questions.filter(q => q.type === 'unit');
 const formulaQs = questions.filter(q => q.type === 'formula');
@@ -600,10 +624,7 @@ function showScreen(id){
 // スタート
 // ================================================================
 function startQuiz(){
-  // Worker URLをlocalStorageに保存（次回入力省略）
-  const inputUrl = document.getElementById('workerUrl').value.trim();
-  if(inputUrl) localStorage.setItem('workerUrl', inputUrl);
-  workerUrl = inputUrl || localStorage.getItem('workerUrl') || '';
+  workerUrl = 'https://gemini-proxy.shohtaujiie.workers.dev';
   qi=0; answers={}; aiResults={}; selResults=[];
   showScreen('quizScreen');
   renderQ();
@@ -618,6 +639,219 @@ function resetQuiz(){
   document.getElementById('progBar').style.width='0%';
   document.getElementById('progLabel').textContent='準備中';
   showScreen('startScreen');
+}
+
+// ================================================================
+// 数式エディタ（KaTeX）
+// ================================================================
+var FE = { lhsToks:[], rhsToks:[], activeSide:'rhs', modalOpen:false };
+var GREEK_FE = [
+  {v:'ρ',lt:'\\rho',sub:'ロー'},{v:'α',lt:'\\alpha',sub:'アルファ'},
+  {v:'β',lt:'\\beta',sub:'ベータ'},{v:'γ',lt:'\\gamma',sub:'ガンマ'},
+  {v:'δ',lt:'\\delta',sub:'デルタ'},{v:'ε',lt:'\\varepsilon',sub:'イプシロン'},
+  {v:'λ',lt:'\\lambda',sub:'ラムダ'},{v:'μ',lt:'\\mu',sub:'ミュー'},
+  {v:'π',lt:'\\pi',sub:'パイ'},{v:'σ',lt:'\\sigma',sub:'シグマ'},
+  {v:'ω',lt:'\\omega',sub:'オメガ'},{v:'Ω',lt:'\\Omega',sub:'オーム'},
+  {v:'φ',lt:'\\varphi',sub:'ファイ'},{v:'θ',lt:'\\theta',sub:'シータ'},
+];
+function feToksToLatex(toks){
+  return toks.map(function(t){
+    if(t.type==='sym'||t.type==='txt') return t.lt||t.v;
+    if(t.type==='frac') return '\\frac{'+(feToksToLatex(t.num||[])||'\\square')+'}'+'{'+(feToksToLatex(t.den||[])||'\\square')+'}';
+    if(t.type==='sup') return (feToksToLatex(t.base||[])||'\\square')+'^{'+(feToksToLatex(t.exp||[])||'\\square')+'}';
+    return '';
+  }).join('');
+}
+function feToksToPlain(toks){
+  return toks.map(function(t){
+    if(t.type==='sym'||t.type==='txt') return t.v;
+    if(t.type==='frac') return '('+feToksToPlain(t.num||[])+')/('+feToksToPlain(t.den||[])+')';
+    if(t.type==='sup') return feToksToPlain(t.base||[])+'^'+feToksToPlain(t.exp||[]);
+    return '';
+  }).join('');
+}
+function feStrToToks(s){
+  return s.split('').map(function(c){
+    var g=GREEK_FE.find(function(x){return x.v===c;});
+    return g?{type:'sym',v:g.v,lt:g.lt}:{type:'txt',v:c,lt:c};
+  });
+}
+function feGetToks(){return FE.activeSide==='lhs'?FE.lhsToks:FE.rhsToks;}
+function feSetToks(t){if(FE.activeSide==='lhs')FE.lhsToks=t;else FE.rhsToks=t;}
+function feFocusSide(side){
+  FE.activeSide=side;
+  var la=document.getElementById('feLhsArea'),ra=document.getElementById('feRhsArea');
+  if(la)la.classList.toggle('active',side==='lhs');
+  if(ra)ra.classList.toggle('active',side==='rhs');
+}
+function feInsertSym(v,lt){var t=feGetToks();t.push({type:'sym',v:v,lt:lt||v});feSetToks(t);feRenderBoth();feUpdatePreview();}
+function feDoBackspace(){var t=feGetToks();if(t.length>0){t.pop();feSetToks(t);feRenderBoth();feUpdatePreview();}}
+function feClearSide(){feSetToks([]);feRenderBoth();feUpdatePreview();}
+function feRenderSide(side){
+  var toks=side==='lhs'?FE.lhsToks:FE.rhsToks;
+  var area=document.getElementById(side==='lhs'?'feLhsArea':'feRhsArea');
+  if(!area)return;
+  area.innerHTML='';
+  if(toks.length===0){
+    var hint=document.createElement('span');hint.style.cssText='font-size:13px;color:var(--gray);';
+    hint.textContent='クリックして選択';area.appendChild(hint);return;
+  }
+  toks.forEach(function(tok,i){
+    var el=document.createElement('span');el.className='fe-tok';
+    var sp=document.createElement('span');
+    var lt='';
+    if(tok.type==='sym'||tok.type==='txt') lt=tok.lt||tok.v;
+    else if(tok.type==='frac') lt='\\frac{'+(feToksToLatex(tok.num||[])||'\\square')+'}'+'{'+(feToksToLatex(tok.den||[])||'\\square')+'}';
+    else if(tok.type==='sup') lt=(feToksToLatex(tok.base||[])||'\\square')+'^{'+(feToksToLatex(tok.exp||[])||'\\square')+'}';
+    try{katex.render(lt,sp,{throwOnError:false});}catch(e){sp.textContent=tok.v||lt;}
+    el.appendChild(sp);
+    if(tok.type==='frac'||tok.type==='sup'){
+      var ep=document.createElement('span');ep.className='fe-edit-p';ep.textContent='✎';
+      (function(ci,ct){ep.onclick=function(e2){e2.stopPropagation();feFocusSide(side);feOpenSubEditor(ct,ci);};})(i,tok.type);
+      el.appendChild(ep);
+    }
+    var dx=document.createElement('span');dx.className='fe-del-x';dx.textContent='×';
+    (function(ci,cs){dx.onclick=function(e2){e2.stopPropagation();var t=cs==='lhs'?FE.lhsToks:FE.rhsToks;t.splice(ci,1);feRenderBoth();feUpdatePreview();};})(i,side);
+    el.appendChild(dx);
+    area.appendChild(el);
+  });
+}
+function feRenderBoth(){feRenderSide('lhs');feRenderSide('rhs');}
+function feUpdatePreview(){
+  var lTex=feToksToLatex(FE.lhsToks),rTex=feToksToLatex(FE.rhsToks);
+  var prev=document.getElementById('fePreview');
+  if(!prev)return;
+  try{katex.render((lTex||'\\square')+'='+(rTex||'\\square'),prev,{throwOnError:false,displayMode:true});}
+  catch(e){prev.textContent=lTex+'='+rTex;}
+}
+function feOpenSubEditor(type,editIdx){
+  FE.modalOpen=true;
+  var sideAtOpen=FE.activeSide;
+  var existing=null;
+  if(editIdx!=null){existing=(sideAtOpen==='lhs'?FE.lhsToks:FE.rhsToks)[editIdx];}
+  var isFrac=type==='frac';
+  var init1='',init2='';
+  if(existing){
+    if(isFrac){init1=feToksToPlain(existing.num||[]);init2=feToksToPlain(existing.den||[]);}
+    else{init1=feToksToPlain(existing.base||[]);init2=feToksToPlain(existing.exp||[]);}
+  }
+  var overlay=document.createElement('div');overlay.className='fe-modal-overlay';
+  var card=document.createElement('div');card.className='fe-modal-card';
+  var hint=isFrac
+    ? '分子（上の数）と分母（下の数）を入力してください。<br>ギリシャ文字はボタンから、英数字はキーボードで入力できます。'
+    : '底（base）は元の数、指数は「何乗か」の数です。例）A² なら 底=A、指数=2<br>ギリシャ文字はボタンから、英数字はキーボードで入力できます。';
+  card.innerHTML=
+    '<div class="fe-modal-title">'+(isFrac?'分数の入力':'指数の入力')+'</div>'+
+    '<div class="fe-modal-hint">'+hint+'</div>'+
+    '<div class="fe-modal-lbl">'+(isFrac?'分子（上）':'底 — 例：A や R や ρ など')+'</div>'+
+    '<input class="fe-modal-input" id="_feIn1" autocomplete="off" spellcheck="false">'+
+    '<div class="fe-modal-lbl">'+(isFrac?'分母（下）':'指数 — 例：2 や 3 など')+'</div>'+
+    '<input class="fe-modal-input" id="_feIn2" autocomplete="off" spellcheck="false">'+
+    '<div class="fe-modal-lbl" style="margin-bottom:4px;">ギリシャ文字ボタン</div>'+
+    '<div class="fe-modal-greek" id="_feMg"></div>'+
+    '<div class="fe-modal-btns">'+
+    '<button class="fe-btn" id="_feMCancel">キャンセル</button>'+
+    '<button class="fe-btn fe-btn-primary" id="_feMOk">確定</button>'+
+    '</div>';
+  overlay.appendChild(card);document.body.appendChild(overlay);
+  card.querySelector('#_feIn1').value=init1;
+  card.querySelector('#_feIn2').value=init2;
+  var activeInp=card.querySelector('#_feIn1');
+  [card.querySelector('#_feIn1'),card.querySelector('#_feIn2')].forEach(function(inp){
+    inp.addEventListener('focus',function(){activeInp=inp;});
+    inp.addEventListener('keydown',function(e){e.stopPropagation();});
+  });
+  card.querySelector('#_feIn1').focus();
+  var mg=card.querySelector('#_feMg');
+  GREEK_FE.forEach(function(g){
+    var b=document.createElement('button');b.textContent=g.v;
+    b.onclick=function(e){e.preventDefault();activeInp.value+=g.v;activeInp.focus();};
+    mg.appendChild(b);
+  });
+  function commit(){
+    var v1=card.querySelector('#_feIn1').value;
+    var v2=card.querySelector('#_feIn2').value;
+    var toks=(sideAtOpen==='lhs'?FE.lhsToks:FE.rhsToks);
+    var tok=isFrac?{type:'frac',num:feStrToToks(v1),den:feStrToToks(v2)}:{type:'sup',base:feStrToToks(v1),exp:feStrToToks(v2)};
+    if(editIdx!=null)toks[editIdx]=tok;else toks.push(tok);
+    closeFeModal();feRenderBoth();feUpdatePreview();
+  }
+  function closeFeModal(){FE.modalOpen=false;document.body.removeChild(overlay);}
+  card.querySelector('#_feMOk').onclick=commit;
+  card.querySelector('#_feMCancel').onclick=closeFeModal;
+  overlay.addEventListener('click',function(e){if(e.target===overlay)closeFeModal();});
+  card.querySelector('#_feIn1').addEventListener('keydown',function(e){if(e.key==='Enter'){e.stopPropagation();card.querySelector('#_feIn2').focus();}});
+  card.querySelector('#_feIn2').addEventListener('keydown',function(e){if(e.key==='Enter'){e.stopPropagation();commit();}});
+}
+function feBuildPalettes(){
+  var pg=document.getElementById('fePalGreek');
+  if(!pg)return;
+  pg.innerHTML='';
+  GREEK_FE.forEach(function(g){
+    var b=document.createElement('button');b.className='fe-pb';
+    var m=document.createElement('span');m.className='fe-pm';
+    try{katex.render(g.lt,m,{throwOnError:false});}catch(e){m.textContent=g.v;}
+    var s=document.createElement('span');s.className='fe-ps';s.textContent=g.sub;
+    b.appendChild(m);b.appendChild(s);b.onclick=function(){feInsertSym(g.v,g.lt);};pg.appendChild(b);
+  });
+  var po=document.getElementById('fePalOps');
+  if(!po)return;
+  po.innerHTML='';
+  var ops=[
+    {label:'分数',lt:'\\frac{a}{b}',action:function(){feOpenSubEditor('frac',null);}},
+    {label:'指数',lt:'x^{2}',action:function(){feOpenSubEditor('sup',null);}},
+    {v:'×',lt:'\\times',label:'×'},{v:'÷',lt:'\\div',label:'÷'},
+    {v:'+',lt:'+',label:'+'},{v:'−',lt:'-',label:'−'},
+    {v:'(',lt:'(',label:'('},{v:')',lt:')',label:')'},
+  ];
+  ops.forEach(function(o){
+    var b=document.createElement('button');b.className='fe-pb';
+    var m=document.createElement('span');m.className='fe-pm';
+    try{katex.render(o.lt,m,{throwOnError:false});}catch(e){m.textContent=o.label;}
+    var s=document.createElement('span');s.className='fe-ps';s.textContent=o.label;
+    b.appendChild(m);b.appendChild(s);b.onclick=o.action||function(){feInsertSym(o.v,o.lt);};po.appendChild(b);
+  });
+}
+document.addEventListener('keydown',function(e){
+  if(!document.getElementById('feRhsArea'))return;
+  if(FE.modalOpen)return;
+  if(e.key==='Backspace'){e.preventDefault();feDoBackspace();return;}
+  if(e.key.length===1&&!e.ctrlKey&&!e.metaKey&&!e.altKey){
+    e.preventDefault();
+    var t=feGetToks();t.push({type:'txt',v:e.key,lt:e.key});feSetToks(t);feRenderBoth();feUpdatePreview();
+  }
+});
+function buildFormulaEditor(){
+  FE.lhsToks=[];FE.rhsToks=[];FE.activeSide='rhs';
+  var ct=document.getElementById('qContent');
+  if(!ct)return;
+  ct.innerHTML=
+    '<div class="fe-how-to"><b>【操作方法】</b><br>'+
+    '① 右辺をクリックして青枠にする　② ギリシャ文字はパレットボタンで挿入　③ 英数字（A・L・Rなど）はキーボードで入力<br>'+
+    '④ <b>分数</b>ボタン→ダイアログで分子・分母→確定　⑤ <b>指数</b>ボタン→ダイアログで底・指数→確定<br>'+
+    '⑥ トークンの <b style="color:var(--ng);">×</b> で個別削除　⑦ <b>← 削除</b>で最後のトークンを削除</div>'+
+    '<div class="fe-editor-card">'+
+    '<div class="fe-eq-row">'+
+    '<div class="fe-side-wrap"><div class="fe-side-lbl">左辺</div>'+
+    '<div class="fe-side-area" id="feLhsArea" onclick="feFocusSide(\'lhs\')"></div></div>'+
+    '<div class="fe-eq-sign">=</div>'+
+    '<div class="fe-side-wrap"><div class="fe-side-lbl">右辺</div>'+
+    '<div class="fe-side-area active" id="feRhsArea" onclick="feFocusSide(\'rhs\')"></div></div>'+
+    '</div></div>'+
+    '<div class="fe-preview-box" id="fePreview"></div>'+
+    '<div class="fe-pal-section"><div class="fe-pal-lbl">ギリシャ文字</div>'+
+    '<div class="fe-pal-row" id="fePalGreek"></div></div>'+
+    '<div class="fe-pal-section"><div class="fe-pal-lbl">演算子・構造</div>'+
+    '<div class="fe-pal-row" id="fePalOps"></div></div>'+
+    '<div class="fe-action-row">'+
+    '<button class="fe-btn fe-btn-danger" onclick="feDoBackspace()">← 削除</button>'+
+    '<button class="fe-btn" onclick="feClearSide()">クリア</button>'+
+    '</div>';
+  feFocusSide('rhs');
+  feRenderBoth();
+  feUpdatePreview();
+  if(typeof katex!=='undefined') feBuildPalettes();
+  else setTimeout(function(){if(typeof katex!=='undefined')feBuildPalettes();},200);
 }
 
 // ================================================================
@@ -669,17 +903,8 @@ function renderQ(){
     if(saved === undefined) btnNext.disabled = false; // 未回答でも次へOK
 
   } else if(q.type === 'formula'){
-    // ── 公式記述 ──
-    const saved = answers[q.id] || '';
-    const wrap  = document.createElement('div');
-    wrap.className = 'formula-input-wrap';
-    wrap.innerHTML = `
-      <span class="formula-input-label">✏️ 公式を記述してください</span>
-      <textarea class="formula-textarea" id="formulaInput" placeholder="例：V = RI  [V]">${saved}</textarea>
-      <div class="formula-hint">
-        ※ 数式は通常のテキストで入力してください。例：<code>I = Q/t [A]</code>、<code>F = BIl [N]</code>
-      </div>`;
-    ct.appendChild(wrap);
+    // ── 公式記述（数式エディタ） ──
+    buildFormulaEditor();
 
     // 既にAI採点済みなら結果を復元
     const ar = aiResults[q.id];
@@ -690,19 +915,6 @@ function renderQ(){
       btnAiScore.disabled = false;
       btnAiScore.textContent = '✨ AI採点する';
     }
-
-    // 入力変化でAI採点ボタンを再表示
-    setTimeout(()=>{
-      const ta = document.getElementById('formulaInput');
-      if(ta){
-        ta.addEventListener('input', ()=>{
-          answers[q.id] = ta.value;
-          if(!aiResults[q.id]){
-            btnAiScore.style.display = 'inline-block';
-          }
-        });
-      }
-    }, 50);
 
   } else {
     // ── 穴埋め ──
@@ -788,9 +1000,9 @@ async function runAiScore(){
   // 回答を収集
   let userAnswer = '';
   if(q.type === 'formula'){
-    const ta = document.getElementById('formulaInput');
-    if(ta) answers[q.id] = ta.value;
-    userAnswer = answers[q.id] || '';
+    const plain = feToksToPlain(FE.lhsToks) + ' = ' + feToksToPlain(FE.rhsToks);
+    answers[q.id] = plain;
+    userAnswer = plain;
   } else {
     const blanks = extractBlanks(q.text);
     saveFillAnswers(q, blanks.length);
