@@ -1059,7 +1059,7 @@ ${noteText}
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({
         contents: [{parts:[{text: prompt}]}],
-        generationConfig: {temperature: 0.1, maxOutputTokens: 300}
+        generationConfig: {temperature: 0.1, maxOutputTokens: 1024}
       })
     });
 
@@ -1069,7 +1069,8 @@ ${noteText}
     }
 
     const data = await resp.json();
-    const raw  = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const rawText = data.candidates?.[0]?.content?.parts?.find(p=>p.text)?.text || '';
+    const raw = rawText.replace(/```json\s*/g,'').replace(/```/g,'').trim();
 
     // JSON抽出
     const jsonMatch = raw.match(/\{[\s\S]*\}/);
@@ -1347,7 +1348,8 @@ ${noteText}
       }
       const data = await resp.json();
       if(data.error) throw new Error(data.error.message || 'APIエラー');
-      const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      const rawText = data.candidates?.[0]?.content?.parts?.find(p=>p.text)?.text || '';
+      const raw = rawText.replace(/```json\s*/g,'').replace(/```/g,'').trim();
       const jsonMatch = raw.match(/\{[\s\S]*\}/);
       if(!jsonMatch) throw new Error('JSON not found: ' + raw.substring(0, 200));
       const parsed = JSON.parse(jsonMatch[0]);
