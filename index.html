@@ -135,6 +135,15 @@ header .sub{font-size:.7rem;color:var(--gray);margin-top:3px;}
 .btn-next:hover:not(:disabled){background:var(--navy3);}
 .btn-next:disabled{opacity:.4;cursor:default;}
 
+/* ── 途中採点ボタン ── */
+.btn-score-now{
+  background:var(--gold);color:var(--navy);border:none;
+  padding:6px 14px;border-radius:7px;
+  font-family:'Noto Sans JP',sans-serif;font-size:.76rem;font-weight:700;
+  cursor:pointer;transition:all .15s;
+}
+.btn-score-now:hover{background:#c89d3a;}
+
 /* ── AI採点ボタン ── */
 .btn-ai-score{
   background:linear-gradient(135deg,#4f46e5,#7c3aed);
@@ -303,6 +312,7 @@ header .sub{font-size:.7rem;color:var(--gray);margin-top:3px;}
       <div class="q-nav">
         <div class="q-nav-top">
           <span class="nav-count" id="navCount"></span>
+          <button class="btn-score-now" onclick="scoreNow()">📊 途中採点</button>
           <button class="btn-quit" onclick="confirmQuit()">テストをやめる</button>
         </div>
         <div class="q-nav-btns">
@@ -1144,6 +1154,18 @@ function prevQ(){
 function confirmQuit(){ document.getElementById('quitModal').classList.add('show'); }
 function closeModal()  { document.getElementById('quitModal').classList.remove('show'); }
 
+function scoreNow(){
+  if(!confirm('まだ全問終わっていません。今の回答で採点しますか？\n（未回答の問題は0点になります）')) return;
+  const q = questions[qi];
+  if(q.type === 'formula'){
+    answers[q.id] = feToksToPlain(FE.lhsToks) + ' = ' + feToksToPlain(FE.rhsToks);
+  } else if(q.type === 'fill'){
+    const blanks = extractBlanks(q.text);
+    saveFillAnswers(q, blanks.length);
+  }
+  scoreAndShow();
+}
+
 // ================================================================
 // 進捗
 // ================================================================
@@ -1319,10 +1341,15 @@ ${noteText}
           generationConfig:{temperature:0.1, maxOutputTokens:300}
         })
       });
+      if(!resp.ok){
+        const err = await resp.json().catch(()=>({}));
+        throw new Error(err.error?.message || `HTTP ${resp.status}`);
+      }
       const data = await resp.json();
+      if(data.error) throw new Error(data.error.message || 'APIエラー');
       const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
       const jsonMatch = raw.match(/\{[\s\S]*\}/);
-      if(!jsonMatch) throw new Error('JSON not found');
+      if(!jsonMatch) throw new Error('JSON not found: ' + raw.substring(0, 200));
       const parsed = JSON.parse(jsonMatch[0]);
       aiResults[q.id] = {score:parsed.score||0, feedback:parsed.feedback||'', scoredAnswer:userAnswer, modelAns};
     } catch(e){
