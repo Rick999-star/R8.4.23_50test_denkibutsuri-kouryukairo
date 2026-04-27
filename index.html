@@ -355,6 +355,11 @@ header .sub{font-size:.7rem;color:var(--gray);margin-top:3px;}
         </div>
       </div>
 
+      <!-- AI採点進捗 -->
+      <div id="aiProgressArea" style="display:none;background:var(--light);border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:.88rem;color:var(--navy2);text-align:center;">
+        <span id="aiProgressText">✨ AI採点中...</span>
+      </div>
+
       <!-- AI採点結果一覧（記述式） -->
       <div class="ai-review-sec">
         <h3>✨ AI採点 解答一覧（記述式）</h3>
@@ -906,16 +911,6 @@ function renderQ(){
     // ── 公式記述（数式エディタ） ──
     buildFormulaEditor();
 
-    // 既にAI採点済みなら結果を復元
-    const ar = aiResults[q.id];
-    if(ar){
-      showAiResultUI(ar);
-    } else {
-      btnAiScore.style.display = 'inline-block';
-      btnAiScore.disabled = false;
-      btnAiScore.textContent = '✨ AI採点する';
-    }
-
   } else {
     // ── 穴埋め ──
     const blanks = extractBlanks(q.text);
@@ -932,16 +927,6 @@ function renderQ(){
       wrap.appendChild(item);
     });
     ct.appendChild(wrap);
-
-    // 既にAI採点済みなら結果を復元
-    const ar = aiResults[q.id];
-    if(ar){
-      showAiResultUI(ar);
-    } else {
-      btnAiScore.style.display = 'inline-block';
-      btnAiScore.disabled = false;
-      btnAiScore.textContent = '✨ AI採点する';
-    }
 
     // 入力変化を保存
     setTimeout(()=>{
@@ -1130,10 +1115,8 @@ function showAiResultUI(ar){
 // ================================================================
 function nextQ(){
   const q = questions[qi];
-  // 記述式で未採点の場合、入力値だけ保存して進む
   if(q.type === 'formula'){
-    const ta = document.getElementById('formulaInput');
-    if(ta) answers[q.id] = ta.value;
+    answers[q.id] = feToksToPlain(FE.lhsToks) + ' = ' + feToksToPlain(FE.rhsToks);
   } else if(q.type === 'fill'){
     const blanks = extractBlanks(q.text);
     saveFillAnswers(q, blanks.length);
@@ -1146,11 +1129,9 @@ function nextQ(){
 
 function prevQ(){
   if(qi<=0) return;
-  // 現在の入力を保存
   const q = questions[qi];
   if(q.type==='formula'){
-    const ta = document.getElementById('formulaInput');
-    if(ta) answers[q.id] = ta.value;
+    answers[q.id] = feToksToPlain(FE.lhsToks) + ' = ' + feToksToPlain(FE.rhsToks);
   } else if(q.type==='fill'){
     const blanks = extractBlanks(q.text);
     saveFillAnswers(q, blanks.length);
@@ -1274,6 +1255,135 @@ function scoreAndShow(){
 
   showScreen('resultScreen');
   window.scrollTo({top:0,behavior:'smooth'});
+
+  // 全問終了後にバッチAI採点を自動実行
+  runBatchAiScore();
+}
+
+// ================================================================
+// バッチAI採点（全問終了後）
+// ================================================================
+async function runBatchAiScore(){
+  const descQsList = [...formulaQs, ...fillQs].sort((a,b)=>a.id-b.id);
+  if(!descQsList.length) return;
+
+  const progressArea = document.getElementById('aiProgressArea');
+  const progressText = document.getElementById('aiProgressText');
+  progressArea.style.display = 'block';
+
+  for(let i=0; i<descQsList.length; i++){
+    const q = descQsList[i];
+    progressText.textContent = `✨ AI採点中... ${i+1} / ${descQsList.length} 問`;
+
+    let userAnswer = '';
+    if(q.type==='formula'){
+      userAnswer = answers[q.id] || '';
+    } else {
+      const blanks = extractBlanks(q.text);
+      const vals = answers[q.id] || [];
+      userAnswer = blanks.map((b,j)=>`${b}：${vals[j]||'（未回答）'}`).join('　');
+    }
+
+    const modelAns = q.ans.join(' / ');
+    const noteText = q.note ? `【補足】${q.note}` : '';
+    const typeLabel = q.type==='formula'?'公式記述問題':'穴埋め問題';
+
+    if(!userAnswer.trim() || userAnswer.trim()===' = '){
+      aiResults[q.id] = {score:0, feedback:'未回答', scoredAnswer:'', modelAns};
+      continue;
+    }
+
+    const prompt = `あなたは電気工学の採点者です。以下の${typeLabel}の回答を採点してください。
+
+【問題】${q.text}
+
+【模範解答】${modelAns}
+${noteText}
+
+【生徒の回答】${userAnswer}
+
+採点基準：
+- 1点（満点）：模範解答と同じ、または数学的・電気工学的に等価な別表現で正解
+- 0.5点（部分点）：一部が正しい、方向性は合っているが不完全、単位が抜けているなど
+- 0点：明らかに誤り、または未回答・無関係な内容
+
+必ず以下のJSON形式のみで回答してください（他のテキスト不可）：
+{"score": 0 or 0.5 or 1, "feedback": "採点理由を日本語で2〜3文で説明"}`;
+
+    try{
+      const resp = await fetch(workerUrl, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          contents:[{parts:[{text:prompt}]}],
+          generationConfig:{temperature:0.1, maxOutputTokens:300}
+        })
+      });
+      const data = await resp.json();
+      const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      const jsonMatch = raw.match(/\{[\s\S]*\}/);
+      if(!jsonMatch) throw new Error('JSON not found');
+      const parsed = JSON.parse(jsonMatch[0]);
+      aiResults[q.id] = {score:parsed.score||0, feedback:parsed.feedback||'', scoredAnswer:userAnswer, modelAns};
+    } catch(e){
+      aiResults[q.id] = {score:0, feedback:`採点エラー: ${e.message}`, scoredAnswer:userAnswer, modelAns};
+    }
+  }
+
+  progressText.textContent = '✅ AI採点完了！';
+  setTimeout(()=>{ progressArea.style.display='none'; }, 2000);
+
+  // スコアと一覧を再描画
+  rebuildAiScores();
+}
+
+function rebuildAiScores(){
+  const formulaScore = formulaQs.reduce((sum,q)=> sum + (aiResults[q.id]?.score||0), 0);
+  const fillScore    = fillQs.reduce((sum,q)=> sum + (aiResults[q.id]?.score||0), 0);
+  const selScore     = selResults.filter(r=>r.ok).length;
+  const totalScore   = selScore + formulaScore + fillScore;
+  const totalMax     = selQs.length + formulaQs.length + fillQs.length;
+
+  document.getElementById('rTotalScore').textContent = totalScore%1===0?totalScore:totalScore.toFixed(1);
+  document.getElementById('rTotalMax').textContent   = totalMax;
+  document.getElementById('rFormulaScore').textContent = formulaScore%1===0?formulaScore:formulaScore.toFixed(1);
+  document.getElementById('rFillScore').textContent    = fillScore%1===0?fillScore:fillScore.toFixed(1);
+  document.getElementById('hdrVal').textContent = totalScore%1===0?totalScore:totalScore.toFixed(1);
+
+  const aiRevList = document.getElementById('aiRevList');
+  aiRevList.innerHTML = '';
+  [...formulaQs, ...fillQs].sort((a,b)=>a.id-b.id).forEach(q=>{
+    const ar  = aiResults[q.id];
+    const div = document.createElement('div');
+    div.className = 'ai-rev-item';
+    if(ar){
+      const cls   = ar.score===1?'full':ar.score===0.5?'half':'zero';
+      const stamp = ar.score===1?'⭕ 満点':'△ 部分点';
+      const sc    = ar.score===0?'❌ 0点':ar.score===0.5?'0.5点':'1点';
+      div.innerHTML = `
+        <div class="ai-rev-hdr ${cls}">
+          <span class="ai-rev-stamp ${ar.score===1?'st-full':ar.score===0.5?'st-half':'st-zero'}">
+            ${ar.score===0?'❌ 不正解':stamp}</span>
+          <span style="color:var(--gray);font-size:.73rem;">
+            Q${String(q.id).padStart(2,'0')} ${q.sec}（${q.type==='formula'?'公式':'穴埋め'}）</span>
+          <span class="ai-rev-score">${sc}</span>
+        </div>
+        <div class="ai-rev-q">${q.text}</div>
+        <div class="ai-rev-feedback">💬 ${ar.feedback}</div>
+        <div class="ai-rev-ans">📖 模範解答：${ar.modelAns}</div>`;
+    } else {
+      div.innerHTML = `
+        <div class="ai-rev-hdr zero" style="background:#f9f9f9;">
+          <span class="ai-rev-stamp st-skip">— 未採点</span>
+          <span style="color:var(--gray);font-size:.73rem;">
+            Q${String(q.id).padStart(2,'0')} ${q.sec}</span>
+          <span class="ai-rev-score" style="color:#888;">0点</span>
+        </div>
+        <div class="ai-rev-q">${q.text}</div>
+        <div class="ai-rev-ans" style="color:#888;">📖 模範解答：${q.ans.join(' / ')}</div>`;
+    }
+    aiRevList.appendChild(div);
+  });
 }
 </script>
 </body>
