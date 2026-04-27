@@ -1059,7 +1059,7 @@ ${noteText}
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({
         contents: [{parts:[{text: prompt}]}],
-        generationConfig: {temperature: 0.1, maxOutputTokens: 1024}
+        generationConfig: {temperature: 0.1, maxOutputTokens: 1024, thinkingConfig:{thinkingBudget:0}}
       })
     });
 
@@ -1069,7 +1069,8 @@ ${noteText}
     }
 
     const data = await resp.json();
-    const rawText = data.candidates?.[0]?.content?.parts?.find(p=>p.text)?.text || '';
+    const parts = data.candidates?.[0]?.content?.parts || [];
+    const rawText = (parts.find(p=>p.text && !p.thought) || parts.find(p=>p.text))?.text || '';
     const raw = rawText.replace(/```json\s*/g,'').replace(/```/g,'').trim();
 
     // JSON抽出
@@ -1339,7 +1340,7 @@ ${noteText}
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({
           contents:[{parts:[{text:prompt}]}],
-          generationConfig:{temperature:0.1, maxOutputTokens:300}
+          generationConfig:{temperature:0.1, maxOutputTokens:1024, thinkingConfig:{thinkingBudget:0}}
         })
       });
       if(!resp.ok){
@@ -1348,7 +1349,8 @@ ${noteText}
       }
       const data = await resp.json();
       if(data.error) throw new Error(data.error.message || 'APIエラー');
-      const rawText = data.candidates?.[0]?.content?.parts?.find(p=>p.text)?.text || '';
+      const parts = data.candidates?.[0]?.content?.parts || [];
+      const rawText = (parts.find(p=>p.text && !p.thought) || parts.find(p=>p.text))?.text || '';
       const raw = rawText.replace(/```json\s*/g,'').replace(/```/g,'').trim();
       const jsonMatch = raw.match(/\{[\s\S]*\}/);
       if(!jsonMatch) throw new Error('JSON not found: ' + raw.substring(0, 200));
