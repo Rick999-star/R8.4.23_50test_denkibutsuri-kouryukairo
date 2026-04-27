@@ -1059,7 +1059,7 @@ ${noteText}
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({
         contents: [{parts:[{text: prompt}]}],
-        generationConfig: {temperature: 0.1, maxOutputTokens: 1024, thinkingConfig:{thinkingBudget:0}}
+        generationConfig: {temperature: 0.1, maxOutputTokens: 1024, responseMimeType:'application/json'}
       })
     });
 
@@ -1070,13 +1070,9 @@ ${noteText}
 
     const data = await resp.json();
     const parts = data.candidates?.[0]?.content?.parts || [];
-    const rawText = (parts.find(p=>p.text && !p.thought) || parts.find(p=>p.text))?.text || '';
-    const raw = rawText.replace(/```json\s*/g,'').replace(/```/g,'').trim();
-
-    // JSON抽出
-    const jsonMatch = raw.match(/\{[\s\S]*\}/);
-    if(!jsonMatch) throw new Error('JSONが見つかりません: ' + raw);
-    const parsed = JSON.parse(jsonMatch[0]);
+    const raw = (parts.find(p=>p.text && !p.thought) || parts.find(p=>p.text))?.text || '';
+    if(!raw) throw new Error('レスポンスが空です');
+    const parsed = JSON.parse(raw);
 
     const result = {
       score:        parsed.score,
@@ -1340,7 +1336,7 @@ ${noteText}
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({
           contents:[{parts:[{text:prompt}]}],
-          generationConfig:{temperature:0.1, maxOutputTokens:1024, thinkingConfig:{thinkingBudget:0}}
+          generationConfig:{temperature:0.1, maxOutputTokens:1024, responseMimeType:'application/json'}
         })
       });
       if(!resp.ok){
@@ -1350,11 +1346,9 @@ ${noteText}
       const data = await resp.json();
       if(data.error) throw new Error(data.error.message || 'APIエラー');
       const parts = data.candidates?.[0]?.content?.parts || [];
-      const rawText = (parts.find(p=>p.text && !p.thought) || parts.find(p=>p.text))?.text || '';
-      const raw = rawText.replace(/```json\s*/g,'').replace(/```/g,'').trim();
-      const jsonMatch = raw.match(/\{[\s\S]*\}/);
-      if(!jsonMatch) throw new Error('JSON not found: ' + raw.substring(0, 200));
-      const parsed = JSON.parse(jsonMatch[0]);
+      const raw = (parts.find(p=>p.text && !p.thought) || parts.find(p=>p.text))?.text || '';
+      if(!raw) throw new Error('レスポンスが空です');
+      const parsed = JSON.parse(raw);
       aiResults[q.id] = {score:parsed.score||0, feedback:parsed.feedback||'', scoredAnswer:userAnswer, modelAns};
     } catch(e){
       aiResults[q.id] = {score:0, feedback:`採点エラー: ${e.message}`, scoredAnswer:userAnswer, modelAns};
