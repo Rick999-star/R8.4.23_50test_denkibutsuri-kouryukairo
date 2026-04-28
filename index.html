@@ -1355,33 +1355,44 @@ ${noteText}
 必ず以下のJSON形式のみで回答してください（他のテキスト不可）：
 {"score": 0 or 0.5 or 1, "feedback": "採点理由を日本語で2〜3文で説明"}`;
 
-    try{
-      const resp = await fetch(workerUrl, {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          contents:[{parts:[{text:prompt}]}],
-          generationConfig:{temperature:0.1, maxOutputTokens:1024}
-        })
-      });
-      if(!resp.ok){
-        const err = await resp.json().catch(()=>({}));
-        throw new Error(err.error?.message || `HTTP ${resp.status}`);
+    let scored = false;
+    for(let attempt=0; attempt<3 && !scored; attempt++){
+      try{
+        const resp = await fetch(workerUrl, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({
+            contents:[{parts:[{text:prompt}]}],
+            generationConfig:{temperature:0.1, maxOutputTokens:1024}
+          })
+        });
+        if(resp.status===429){
+          const err = await resp.json().catch(()=>({}));
+          const msg = err.error?.message || '';
+          const waitMatch = msg.match(/retry in ([\d.]+)s/i);
+          const waitSec = waitMatch ? Math.ceil(parseFloat(waitMatch[1]))+2 : 60;
+          progressText.textContent = `⏳ レート制限のため ${waitSec} 秒待機中... (${i+1}/${descQsList.length})`;
+          await new Promise(r=>setTimeout(r, waitSec*1000));
+          continue;
+        }
+        if(!resp.ok){
+          const err = await resp.json().catch(()=>({}));
+          throw new Error(err.error?.message || `HTTP ${resp.status}`);
+        }
+        const data = await resp.json();
+        if(data.error) throw new Error(data.error.message || 'APIエラー');
+        const parts = data.candidates?.[0]?.content?.parts || [];
+        const rawText = (parts.find(p=>p.text && !p.thought) || parts.find(p=>p.text))?.text || '';
+        const raw = rawText.replace(/```json\s*/g,'').replace(/```/g,'').trim();
+        if(!raw) throw new Error('レスポンスが空です');
+        const jsonMatch = raw.match(/\{[\s\S]*\}/);
+        if(!jsonMatch) throw new Error('JSON解析失敗: ' + raw.substring(0, 200));
+        const parsed = JSON.parse(jsonMatch[0]);
+        aiResults[q.id] = {score:parsed.score||0, feedback:parsed.feedback||'', scoredAnswer:userAnswer, modelAns};
+        scored = true;
+      } catch(e){
+        if(attempt===2) aiResults[q.id] = {score:0, feedback:`採点エラー: ${e.message}`, scoredAnswer:userAnswer, modelAns};
       }
-      const data = await resp.json();
-      console.log('[AI採点] response:', JSON.stringify(data).substring(0, 500));
-      if(data.error) throw new Error(data.error.message || 'APIエラー');
-      const parts = data.candidates?.[0]?.content?.parts || [];
-      console.log('[AI採点] parts:', parts.map(p=>({thought:p.thought, len:p.text?.length, preview:p.text?.substring(0,80)})));
-      const rawText = (parts.find(p=>p.text && !p.thought) || parts.find(p=>p.text))?.text || '';
-      const raw = rawText.replace(/```json\s*/g,'').replace(/```/g,'').trim();
-      if(!raw) throw new Error('レスポンスが空です');
-      const jsonMatch = raw.match(/\{[\s\S]*\}/);
-      if(!jsonMatch) throw new Error('JSON解析失敗: ' + raw.substring(0, 200));
-      const parsed = JSON.parse(jsonMatch[0]);
-      aiResults[q.id] = {score:parsed.score||0, feedback:parsed.feedback||'', scoredAnswer:userAnswer, modelAns};
-    } catch(e){
-      aiResults[q.id] = {score:0, feedback:`採点エラー: ${e.message}`, scoredAnswer:userAnswer, modelAns};
     }
   }
 
