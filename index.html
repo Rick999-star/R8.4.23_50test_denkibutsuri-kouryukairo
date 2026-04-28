@@ -717,6 +717,8 @@ function feFocusSide(side){
   var la=document.getElementById('feLhsArea'),ra=document.getElementById('feRhsArea');
   if(la)la.classList.toggle('active',side==='lhs');
   if(ra)ra.classList.toggle('active',side==='rhs');
+  var hi=document.getElementById('feHiddenInput');
+  if(hi){hi.style.pointerEvents='auto';hi.focus();hi.style.pointerEvents='none';}
 }
 function feInsertSym(v,lt){var t=feGetToks();t.push({type:'sym',v:v,lt:lt||v});feSetToks(t);feRenderBoth();feUpdatePreview();}
 function feDoBackspace(){var t=feGetToks();if(t.length>0){t.pop();feSetToks(t);feRenderBoth();feUpdatePreview();}}
@@ -866,9 +868,11 @@ function buildFormulaEditor(){
   if(!ct)return;
   ct.innerHTML=
     '<div class="fe-how-to"><b>【操作方法】</b><br>'+
-    '① 右辺をクリックして青枠にする　② ギリシャ文字はパレットボタンで挿入　③ 英数字（A・L・Rなど）はキーボードで入力<br>'+
+    '① 左辺・右辺をクリック（スマホはタップ）して青枠にする　② 英数字はキーボードで入力　③ ギリシャ文字はパレットボタンで挿入<br>'+
     '④ <b>分数</b>ボタン→ダイアログで分子・分母→確定　⑤ <b>指数</b>ボタン→ダイアログで底・指数→確定　⑥ <b>下付き</b>ボタン→ダイアログで文字・下付き数字→確定（例：m₁）<br>'+
     '⑦ トークンの <b style="color:var(--ng);">×</b> で個別削除　⑧ <b>← 削除</b>で最後のトークンを削除</div>'+
+    '<input type="text" id="feHiddenInput" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"'+
+    ' style="position:fixed;opacity:0;width:1px;height:1px;top:50%;left:50%;border:none;outline:none;z-index:-1;pointer-events:none;">'+
     '<div class="fe-editor-card">'+
     '<div class="fe-eq-row">'+
     '<div class="fe-side-wrap"><div class="fe-side-lbl">左辺</div>'+
@@ -886,6 +890,26 @@ function buildFormulaEditor(){
     '<button class="fe-btn fe-btn-danger" onclick="feDoBackspace()">← 削除</button>'+
     '<button class="fe-btn" onclick="feClearSide()">クリア</button>'+
     '</div>';
+  // スマホ用：隠しinputへのイベント
+  var hi=document.getElementById('feHiddenInput');
+  if(hi){
+    hi.addEventListener('input',function(e){
+      if(FE.modalOpen)return;
+      var chars=e.data||hi.value;
+      hi.value='';
+      if(!chars)return;
+      var t=feGetToks();
+      for(var i=0;i<chars.length;i++){
+        var c=chars[i];
+        var g=GREEK_FE.find(function(x){return x.v===c;});
+        t.push(g?{type:'sym',v:g.v,lt:g.lt}:{type:'txt',v:c,lt:c});
+      }
+      feSetToks(t);feRenderBoth();feUpdatePreview();
+    });
+    hi.addEventListener('keydown',function(e){
+      if(e.key==='Backspace'){e.preventDefault();feDoBackspace();}
+    });
+  }
   feFocusSide('rhs');
   feRenderBoth();
   feUpdatePreview();
