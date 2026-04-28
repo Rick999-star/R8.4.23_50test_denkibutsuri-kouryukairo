@@ -674,6 +674,7 @@ function feToksToLatex(toks){
     if(t.type==='sym'||t.type==='txt') return t.lt||t.v;
     if(t.type==='frac') return '\\frac{'+(feToksToLatex(t.num||[])||'\\square')+'}'+'{'+(feToksToLatex(t.den||[])||'\\square')+'}';
     if(t.type==='sup') return (feToksToLatex(t.base||[])||'\\square')+'^{'+(feToksToLatex(t.exp||[])||'\\square')+'}';
+    if(t.type==='sub') return (feToksToLatex(t.base||[])||'\\square')+'_{'+(feToksToLatex(t.exp||[])||'\\square')+'}';
     return '';
   }).join('');
 }
@@ -682,6 +683,7 @@ function feToksToPlain(toks){
     if(t.type==='sym'||t.type==='txt') return t.v;
     if(t.type==='frac') return '('+feToksToPlain(t.num||[])+')/('+feToksToPlain(t.den||[])+')';
     if(t.type==='sup') return feToksToPlain(t.base||[])+'^'+feToksToPlain(t.exp||[]);
+    if(t.type==='sub') return feToksToPlain(t.base||[])+'_'+feToksToPlain(t.exp||[]);
     return '';
   }).join('');
 }
@@ -718,9 +720,10 @@ function feRenderSide(side){
     if(tok.type==='sym'||tok.type==='txt') lt=tok.lt||tok.v;
     else if(tok.type==='frac') lt='\\frac{'+(feToksToLatex(tok.num||[])||'\\square')+'}'+'{'+(feToksToLatex(tok.den||[])||'\\square')+'}';
     else if(tok.type==='sup') lt=(feToksToLatex(tok.base||[])||'\\square')+'^{'+(feToksToLatex(tok.exp||[])||'\\square')+'}';
+    else if(tok.type==='sub') lt=(feToksToLatex(tok.base||[])||'\\square')+'_{'+(feToksToLatex(tok.exp||[])||'\\square')+'}';
     try{katex.render(lt,sp,{throwOnError:false});}catch(e){sp.textContent=tok.v||lt;}
     el.appendChild(sp);
-    if(tok.type==='frac'||tok.type==='sup'){
+    if(tok.type==='frac'||tok.type==='sup'||tok.type==='sub'){
       var ep=document.createElement('span');ep.className='fe-edit-p';ep.textContent='✎';
       (function(ci,ct){ep.onclick=function(e2){e2.stopPropagation();feFocusSide(side);feOpenSubEditor(ct,ci);};})(i,tok.type);
       el.appendChild(ep);
@@ -745,6 +748,7 @@ function feOpenSubEditor(type,editIdx){
   var existing=null;
   if(editIdx!=null){existing=(sideAtOpen==='lhs'?FE.lhsToks:FE.rhsToks)[editIdx];}
   var isFrac=type==='frac';
+  var isSub=type==='sub';
   var init1='',init2='';
   if(existing){
     if(isFrac){init1=feToksToPlain(existing.num||[]);init2=feToksToPlain(existing.den||[]);}
@@ -754,13 +758,15 @@ function feOpenSubEditor(type,editIdx){
   var card=document.createElement('div');card.className='fe-modal-card';
   var hint=isFrac
     ? '分子（上の数）と分母（下の数）を入力してください。<br>ギリシャ文字はボタンから、英数字はキーボードで入力できます。'
-    : '底（base）は元の数、指数は「何乗か」の数です。例）A² なら 底=A、指数=2<br>ギリシャ文字はボタンから、英数字はキーボードで入力できます。';
+    : isSub
+      ? '文字と下付き数字を入力してください。例）m₁ なら 文字=m、下付き=1<br>ギリシャ文字はボタンから、英数字はキーボードで入力できます。'
+      : '底（base）は元の数、指数は「何乗か」の数です。例）A² なら 底=A、指数=2<br>ギリシャ文字はボタンから、英数字はキーボードで入力できます。';
   card.innerHTML=
-    '<div class="fe-modal-title">'+(isFrac?'分数の入力':'指数の入力')+'</div>'+
+    '<div class="fe-modal-title">'+(isFrac?'分数の入力':isSub?'下付き文字の入力':'指数の入力')+'</div>'+
     '<div class="fe-modal-hint">'+hint+'</div>'+
-    '<div class="fe-modal-lbl">'+(isFrac?'分子（上）':'底 — 例：A や R や ρ など')+'</div>'+
+    '<div class="fe-modal-lbl">'+(isFrac?'分子（上）':isSub?'文字 — 例：m や R や ρ など':'底 — 例：A や R や ρ など')+'</div>'+
     '<input class="fe-modal-input" id="_feIn1" autocomplete="off" spellcheck="false">'+
-    '<div class="fe-modal-lbl">'+(isFrac?'分母（下）':'指数 — 例：2 や 3 など')+'</div>'+
+    '<div class="fe-modal-lbl">'+(isFrac?'分母（下）':isSub?'下付き — 例：1 や 2 など':'指数 — 例：2 や 3 など')+'</div>'+
     '<input class="fe-modal-input" id="_feIn2" autocomplete="off" spellcheck="false">'+
     '<div class="fe-modal-lbl" style="margin-bottom:4px;">ギリシャ文字ボタン</div>'+
     '<div class="fe-modal-greek" id="_feMg"></div>'+
@@ -787,7 +793,7 @@ function feOpenSubEditor(type,editIdx){
     var v1=card.querySelector('#_feIn1').value;
     var v2=card.querySelector('#_feIn2').value;
     var toks=(sideAtOpen==='lhs'?FE.lhsToks:FE.rhsToks);
-    var tok=isFrac?{type:'frac',num:feStrToToks(v1),den:feStrToToks(v2)}:{type:'sup',base:feStrToToks(v1),exp:feStrToToks(v2)};
+    var tok=isFrac?{type:'frac',num:feStrToToks(v1),den:feStrToToks(v2)}:isSub?{type:'sub',base:feStrToToks(v1),exp:feStrToToks(v2)}:{type:'sup',base:feStrToToks(v1),exp:feStrToToks(v2)};
     if(editIdx!=null)toks[editIdx]=tok;else toks.push(tok);
     closeFeModal();feRenderBoth();feUpdatePreview();
   }
@@ -815,6 +821,7 @@ function feBuildPalettes(){
   var ops=[
     {label:'分数',lt:'\\frac{a}{b}',action:function(){feOpenSubEditor('frac',null);}},
     {label:'指数',lt:'x^{2}',action:function(){feOpenSubEditor('sup',null);}},
+    {label:'下付き',lt:'m_{1}',action:function(){feOpenSubEditor('sub',null);}},
     {v:'×',lt:'\\times',label:'×'},{v:'÷',lt:'\\div',label:'÷'},
     {v:'+',lt:'+',label:'+'},{v:'−',lt:'-',label:'−'},
     {v:'(',lt:'(',label:'('},{v:')',lt:')',label:')'},
@@ -843,8 +850,8 @@ function buildFormulaEditor(){
   ct.innerHTML=
     '<div class="fe-how-to"><b>【操作方法】</b><br>'+
     '① 右辺をクリックして青枠にする　② ギリシャ文字はパレットボタンで挿入　③ 英数字（A・L・Rなど）はキーボードで入力<br>'+
-    '④ <b>分数</b>ボタン→ダイアログで分子・分母→確定　⑤ <b>指数</b>ボタン→ダイアログで底・指数→確定<br>'+
-    '⑥ トークンの <b style="color:var(--ng);">×</b> で個別削除　⑦ <b>← 削除</b>で最後のトークンを削除</div>'+
+    '④ <b>分数</b>ボタン→ダイアログで分子・分母→確定　⑤ <b>指数</b>ボタン→ダイアログで底・指数→確定　⑥ <b>下付き</b>ボタン→ダイアログで文字・下付き数字→確定（例：m₁）<br>'+
+    '⑦ トークンの <b style="color:var(--ng);">×</b> で個別削除　⑧ <b>← 削除</b>で最後のトークンを削除</div>'+
     '<div class="fe-editor-card">'+
     '<div class="fe-eq-row">'+
     '<div class="fe-side-wrap"><div class="fe-side-lbl">左辺</div>'+
@@ -1031,8 +1038,8 @@ ${noteText}
 【生徒の回答】${userAnswer}
 
 採点基準：
-- 1点（満点）：模範解答と同じ、または数学的・電気工学的に等価な別表現で正解
-- 0.5点（部分点）：一部が正しい、方向性は合っているが不完全、単位が抜けているなど
+- 1点（満点）：公式・式の構造が正しければ満点。単位の記載は不要（単位がなくても減点しない）
+- 0.5点（部分点）：一部が正しい、方向性は合っているが式の構造が不完全
 - 0点：明らかに誤り、または未回答・無関係な内容
 
 必ず以下のJSON形式のみで回答してください（他のテキスト不可）：
@@ -1326,8 +1333,8 @@ ${noteText}
 【生徒の回答】${userAnswer}
 
 採点基準：
-- 1点（満点）：模範解答と同じ、または数学的・電気工学的に等価な別表現で正解
-- 0.5点（部分点）：一部が正しい、方向性は合っているが不完全、単位が抜けているなど
+- 1点（満点）：公式・式の構造が正しければ満点。単位の記載は不要（単位がなくても減点しない）
+- 0.5点（部分点）：一部が正しい、方向性は合っているが式の構造が不完全
 - 0点：明らかに誤り、または未回答・無関係な内容
 
 必ず以下のJSON形式のみで回答してください（他のテキスト不可）：
