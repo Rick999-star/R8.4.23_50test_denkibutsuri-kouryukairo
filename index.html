@@ -1390,6 +1390,8 @@ ${noteText}
         const parsed = JSON.parse(jsonMatch[0]);
         aiResults[q.id] = {score:parsed.score||0, feedback:parsed.feedback||'', scoredAnswer:userAnswer, modelAns};
         scored = true;
+        // レート制限を避けるため次のリクエストまで2秒待機
+        await new Promise(r=>setTimeout(r,2000));
       } catch(e){
         if(attempt===2) aiResults[q.id] = {score:0, feedback:`採点エラー: ${e.message}`, scoredAnswer:userAnswer, modelAns};
       }
