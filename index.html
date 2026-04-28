@@ -1059,7 +1059,7 @@ ${noteText}
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({
         contents: [{parts:[{text: prompt}]}],
-        generationConfig: {temperature: 0.1, maxOutputTokens: 1024, response_mime_type:'application/json'}
+        generationConfig: {temperature: 0.1, maxOutputTokens: 1024}
       })
     });
 
@@ -1070,9 +1070,12 @@ ${noteText}
 
     const data = await resp.json();
     const parts = data.candidates?.[0]?.content?.parts || [];
-    const raw = (parts.find(p=>p.text && !p.thought) || parts.find(p=>p.text))?.text || '';
+    const rawText = (parts.find(p=>p.text && !p.thought) || parts.find(p=>p.text))?.text || '';
+    const raw = rawText.replace(/```json\s*/g,'').replace(/```/g,'').trim();
     if(!raw) throw new Error('レスポンスが空です');
-    const parsed = JSON.parse(raw);
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if(!jsonMatch) throw new Error('JSON解析失敗: ' + raw.substring(0, 200));
+    const parsed = JSON.parse(jsonMatch[0]);
 
     const result = {
       score:        parsed.score,
@@ -1336,7 +1339,7 @@ ${noteText}
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({
           contents:[{parts:[{text:prompt}]}],
-          generationConfig:{temperature:0.1, maxOutputTokens:1024, response_mime_type:'application/json'}
+          generationConfig:{temperature:0.1, maxOutputTokens:1024}
         })
       });
       if(!resp.ok){
@@ -1348,9 +1351,12 @@ ${noteText}
       if(data.error) throw new Error(data.error.message || 'APIエラー');
       const parts = data.candidates?.[0]?.content?.parts || [];
       console.log('[AI採点] parts:', parts.map(p=>({thought:p.thought, len:p.text?.length, preview:p.text?.substring(0,80)})));
-      const raw = (parts.find(p=>p.text && !p.thought) || parts.find(p=>p.text))?.text || '';
+      const rawText = (parts.find(p=>p.text && !p.thought) || parts.find(p=>p.text))?.text || '';
+      const raw = rawText.replace(/```json\s*/g,'').replace(/```/g,'').trim();
       if(!raw) throw new Error('レスポンスが空です');
-      const parsed = JSON.parse(raw);
+      const jsonMatch = raw.match(/\{[\s\S]*\}/);
+      if(!jsonMatch) throw new Error('JSON解析失敗: ' + raw.substring(0, 200));
+      const parsed = JSON.parse(jsonMatch[0]);
       aiResults[q.id] = {score:parsed.score||0, feedback:parsed.feedback||'', scoredAnswer:userAnswer, modelAns};
     } catch(e){
       aiResults[q.id] = {score:0, feedback:`採点エラー: ${e.message}`, scoredAnswer:userAnswer, modelAns};
