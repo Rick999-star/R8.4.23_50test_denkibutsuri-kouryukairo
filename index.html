@@ -198,7 +198,9 @@ header .sub{font-size:.7rem;color:var(--gray);margin-top:3px;}
 .st-skip{background:#f3f3f3;color:#888;}
 .ai-rev-score{margin-left:auto;font-weight:700;font-size:.84rem;}
 .ai-rev-q{font-size:.8rem;padding:6px 14px;color:#334;line-height:1.6;}
-.ai-rev-feedback{font-size:.78rem;padding:4px 14px 10px;color:#445;line-height:1.6;}
+.ai-rev-feedback{font-size:.78rem;padding:4px 14px 6px;color:#445;line-height:1.6;}
+.ai-rev-student{font-size:.76rem;padding:3px 14px 4px;color:#555;}
+.ai-rev-student b{color:#333;}
 .ai-rev-ans{font-size:.76rem;padding:3px 14px 9px;color:var(--ok);font-weight:700;}
 
 /* 選択問題解答一覧 */
@@ -1136,6 +1138,10 @@ function showAiResultUI(ar){
   header.innerHTML = `<span>${label}</span><span class="ai-result-score">${score} pt</span>`;
   body.innerHTML   = `
     <div>${ar.feedback}</div>
+    <div class="model-ans" style="border-color:#dde;background:#f5f5fa;">
+      <div class="model-ans-label" style="color:#667;">✏️ あなたの解答</div>
+      <div>${ar.scoredAnswer || '（未回答）'}</div>
+    </div>
     <div class="model-ans">
       <div class="model-ans-label">📖 模範解答</div>
       <div>${ar.modelAns}</div>
@@ -1263,6 +1269,7 @@ function scoreAndShow(){
           <span class="ai-rev-score">${sc}</span>
         </div>
         <div class="ai-rev-q">${q.text}</div>
+        <div class="ai-rev-student">✏️ あなたの解答：<b>${ar.scoredAnswer || '（未回答）'}</b></div>
         <div class="ai-rev-feedback">💬 ${ar.feedback}</div>
         <div class="ai-rev-ans">📖 模範解答：${ar.modelAns}</div>`;
     } else {
@@ -1437,6 +1444,7 @@ function rebuildAiScores(){
           <span class="ai-rev-score">${sc}</span>
         </div>
         <div class="ai-rev-q">${q.text}</div>
+        <div class="ai-rev-student">✏️ あなたの解答：<b>${ar.scoredAnswer || '（未回答）'}</b></div>
         <div class="ai-rev-feedback">💬 ${ar.feedback}</div>
         <div class="ai-rev-ans">📖 模範解答：${ar.modelAns}</div>`;
     } else {
