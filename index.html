@@ -1059,7 +1059,7 @@ ${noteText}
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({
         contents: [{parts:[{text: prompt}]}],
-        generationConfig: {temperature: 0.1, maxOutputTokens: 1024, responseMimeType:'application/json'}
+        generationConfig: {temperature: 0.1, maxOutputTokens: 1024, response_mime_type:'application/json'}
       })
     });
 
@@ -1336,7 +1336,7 @@ ${noteText}
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({
           contents:[{parts:[{text:prompt}]}],
-          generationConfig:{temperature:0.1, maxOutputTokens:1024, responseMimeType:'application/json'}
+          generationConfig:{temperature:0.1, maxOutputTokens:1024, response_mime_type:'application/json'}
         })
       });
       if(!resp.ok){
