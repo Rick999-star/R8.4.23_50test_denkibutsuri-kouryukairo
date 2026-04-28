@@ -671,7 +671,8 @@ var GREEK_FE = [
 ];
 function feToksToLatex(toks){
   return toks.map(function(t){
-    if(t.type==='sym'||t.type==='txt') return t.lt||t.v;
+    if(t.type==='sym') return '{'+( t.lt||t.v)+'}';
+    if(t.type==='txt') return t.lt||t.v;
     if(t.type==='frac') return '\\frac{'+(feToksToLatex(t.num||[])||'\\square')+'}'+'{'+(feToksToLatex(t.den||[])||'\\square')+'}';
     if(t.type==='sup') return (feToksToLatex(t.base||[])||'\\square')+'^{'+(feToksToLatex(t.exp||[])||'\\square')+'}';
     if(t.type==='sub') return (feToksToLatex(t.base||[])||'\\square')+'_{'+(feToksToLatex(t.exp||[])||'\\square')+'}';
@@ -688,10 +689,24 @@ function feToksToPlain(toks){
   }).join('');
 }
 function feStrToToks(s){
-  return s.split('').map(function(c){
-    var g=GREEK_FE.find(function(x){return x.v===c;});
-    return g?{type:'sym',v:g.v,lt:g.lt}:{type:'txt',v:c,lt:c};
-  });
+  var result=[],i=0;
+  while(i<s.length){
+    var c=s[i];
+    if((c==='_'||c==='^')&&i+1<s.length){
+      var tokType=c==='_'?'sub':'sup';
+      var base=result.length>0?[result.pop()]:[{type:'txt',v:'',lt:''}];
+      i++;
+      var expStr='';
+      if(s[i]==='{'){i++;while(i<s.length&&s[i]!=='}'){expStr+=s[i];i++;}if(s[i]==='}')i++;}
+      else{expStr=s[i];i++;}
+      result.push({type:tokType,base:base,exp:feStrToToks(expStr)});
+    } else {
+      var g=GREEK_FE.find(function(x){return x.v===c;});
+      result.push(g?{type:'sym',v:g.v,lt:g.lt}:{type:'txt',v:c,lt:c});
+      i++;
+    }
+  }
+  return result;
 }
 function feGetToks(){return FE.activeSide==='lhs'?FE.lhsToks:FE.rhsToks;}
 function feSetToks(t){if(FE.activeSide==='lhs')FE.lhsToks=t;else FE.rhsToks=t;}
@@ -757,7 +772,7 @@ function feOpenSubEditor(type,editIdx){
   var overlay=document.createElement('div');overlay.className='fe-modal-overlay';
   var card=document.createElement('div');card.className='fe-modal-card';
   var hint=isFrac
-    ? '分子（上の数）と分母（下の数）を入力してください。<br>ギリシャ文字はボタンから、英数字はキーボードで入力できます。'
+    ? '分子・分母を入力してください。<br>ギリシャ文字はボタンから、英数字はキーボードで入力。<br>下付き：<b>Q_1</b>（Q₁）　指数：<b>r^2</b>（r²）のように _ や ^ で記述できます。'
     : isSub
       ? '文字と下付き数字を入力してください。例）m₁ なら 文字=m、下付き=1<br>ギリシャ文字はボタンから、英数字はキーボードで入力できます。'
       : '底（base）は元の数、指数は「何乗か」の数です。例）A² なら 底=A、指数=2<br>ギリシャ文字はボタンから、英数字はキーボードで入力できます。';
